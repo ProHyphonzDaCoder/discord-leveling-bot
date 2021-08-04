@@ -21,6 +21,8 @@ const config = require("../config.json");
 module.exports = async (client, message) => {
     if (message.author.bot) return;
     if (!message.guild) return;
+	
+	var recentMessages = [];
 
     const currentPrefix = sql.prepare("SELECT * FROM prefix WHERE guild = ?").get(message.guild.id);
     const Prefix = config.prefix;
@@ -83,17 +85,24 @@ module.exports = async (client, message) => {
         console.error(error);
         message.reply("There was an error executing that command.").catch(console.error);
     }
+		// Check if the table "points" exists.
+    const levelTable = sql.prepare("SELECT count(*) FROM sqlite_master WHERE type='table' AND name = 'levels';").get();
 
-    let blacklist = sql.prepare(`SELECT id FROM blacklistTable WHERE id = ?`);
-    if (blacklist.get(`${message.guild.id}-${message.author.id}`) || blacklist.get(`${message.guild.id}-${message.channel.id}`)) return;
+    if (!levelTable['count(*)']) {
+        sql.prepare("CREATE TABLE levels (id TEXT PRIMARY KEY, user TEXT, guild TEXT, xp INTEGER, level INTEGER, totalXP INTEGER);").run();
+    }
 
+    client.getLevel = sql.prepare("SELECT * FROM levels WHERE user = ? AND guild = ?");
+    client.setLevel = sql.prepare("INSERT OR REPLACE INTO levels (id, user, guild, xp, level, totalXP) VALUES (?, ?, ?, ?, ?, ?);");
+	level = client.getLevel.get(message.author.id, message.guild.id);
     // get level and set level
-    const level = client.getLevel.get(message.author.id, message.guild.id)
     if (!level) {
         let insertLevel = sql.prepare("INSERT OR REPLACE INTO levels (id, user, guild, xp, level, totalXP) VALUES (?,?,?,?,?,?);");
         insertLevel.run(`${message.author.id}-${message.guild.id}`, message.author.id, message.guild.id, 0, 0, 0)
         return;
     }
+    let blacklist = sql.prepare(`SELECT id FROM blacklistTable WHERE id = ?`);
+    if (blacklist.get(`${message.guild.id}-${message.author.id}`) || blacklist.get(`${message.guild.id}-${message.channel.id}`)) return;
 
     let customSettings = sql.prepare("SELECT * FROM settings WHERE guild = ?").get(message.guild.id);
     let channelLevel = sql.prepare("SELECT * FROM channel WHERE guild = ?").get(message.guild.id);
@@ -114,8 +123,8 @@ module.exports = async (client, message) => {
     // xp system
     const generatedXp = Math.floor(Math.random() * getXpfromDB);
     const nextXP = level.level * 2 * 250 + 250
-    // message content or characters length has to be more than 4 characters also cooldown
-    if (talkedRecently.get(message.author.id) || message.content.length < 3 || message.content.startsWith(config.prefix)) {
+    // Anti-spam to prevent users from posting spam in the hopes of leveling up
+    if (recentMessages.includes(message.content) || message.content.startsWith("!") || ) {
         return;
     } else { // cooldown is 10 seconds
         level.xp += generatedXp;
@@ -172,10 +181,12 @@ module.exports = async (client, message) => {
                 }
             }
         };
-        client.setLevel.run(level);
+        client.setLevel.run(`${message.author.id}-${message.guild.id}`, message.author.id, message.guild.id, level.xp, level.level, level.totalXP);
         // add cooldown to user
-        talkedRecently.set(message.author.id, Date.now() + getCooldownfromDB);
-        setTimeout(() => talkedRecently.delete(message.author.id, Date.now() + getCooldownfromDB))
+        recentMessages.push(message.content);
+        setTimeout(function() {
+			recentMessages = [];
+		}, 5000);
     }
     // level up, time to add level roles
     const member = message.member;
