@@ -124,7 +124,7 @@ module.exports = async (client, message) => {
     const generatedXp = Math.floor(Math.random() * getXpfromDB);
     const nextXP = level.level * 2 * 250 + 250
     // Anti-spam to prevent users from posting spam in the hopes of leveling up
-    if (recentMessages.includes(message.content) || message.content.startsWith("!") || ) {
+    if (recentMessages.includes(message.content) || message.content.startsWith("!")) {
         return;
     } else { // cooldown is 10 seconds
         level.xp += generatedXp;
