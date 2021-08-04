@@ -1,18 +1,18 @@
 {
-  "name": "discord.js-leveling-bot",
+  "name": "canvacord-leveling-bot",
   "version": "1.0.0",
-  "description": "> A Discord Leveling Bot built with Discord.js and Canvas made by roefinoavrililo",
+  "description": "A leveling & XP Discord bot with anti-spam features, a rank card similar to MEE6, and customizable backgrounds. Written in a mixture of love and Discord.JS!",
   "main": "index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/roefinoavrililo/Discord.JS-Leveling-Bot.git"
   },
-  "author": "roefinoavrililo",
-  "license": "ISC",
+  "author": "Connor Ahern",
+  "license": "MPL-2.0",
   "bugs": {
-    "url": "https://github.com/roefinoavrililo/Discord.JS-Leveling-Bot/issues"
+    "url": "https://github.com/ConnorAhern/canvacord-leveling-bot/issues"
   },
-  "homepage": "https://github.com/roefinoavrililo/Discord.JS-Leveling-Bot#readme",
+  "homepage": "https://github.com/ConnorAhern/canvacord-leveling-bot",
   "engines": {
     "node": ">=12.0.0"
   },
