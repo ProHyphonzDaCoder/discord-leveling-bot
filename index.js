@@ -18,7 +18,7 @@ const config = require("./config.json")
 client.login(config.token)
 
 client.on("ready", () => {
-	client.user.setActivity("!help | Official FA Leveling Bot!", { type: "PLAYING" }).catch(console.error)
+    client.user.setActivity("!help | Official FA Leveling Bot!", { type: "PLAYING" }).catch(console.error)
 	
     // Check if the table "points" exists.
     const levelTable = sql.prepare("SELECT count(*) FROM sqlite_master WHERE type='table' AND name = 'levels';").get();
