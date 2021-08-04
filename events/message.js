@@ -2,13 +2,9 @@
 const Discord = require("discord.js")
 const SQLite = require("better-sqlite3")
 const sql = new SQLite('./mainDB.sqlite')
-const {
-    join
-} = require("path")
+const { join } = require("path")
 const fs = require("fs");
-const {
-    readdirSync
-} = require("fs");
+const { readdirSync } = require("fs");
 
 const client = new Discord.Client()
 
@@ -21,8 +17,8 @@ const config = require("../config.json");
 module.exports = async (client, message) => {
     if (message.author.bot) return;
     if (!message.guild) return;
-	
-	var recentMessages = [];
+
+    var recentMessages = [];
 
     const currentPrefix = sql.prepare("SELECT * FROM prefix WHERE guild = ?").get(message.guild.id);
     const Prefix = config.prefix;
@@ -85,7 +81,7 @@ module.exports = async (client, message) => {
         console.error(error);
         message.reply("There was an error executing that command.").catch(console.error);
     }
-		// Check if the table "points" exists.
+    // Check if the table "points" exists.
     const levelTable = sql.prepare("SELECT count(*) FROM sqlite_master WHERE type='table' AND name = 'levels';").get();
 
     if (!levelTable['count(*)']) {
@@ -94,7 +90,7 @@ module.exports = async (client, message) => {
 
     client.getLevel = sql.prepare("SELECT * FROM levels WHERE user = ? AND guild = ?");
     client.setLevel = sql.prepare("INSERT OR REPLACE INTO levels (id, user, guild, xp, level, totalXP) VALUES (?, ?, ?, ?, ?, ?);");
-	level = client.getLevel.get(message.author.id, message.guild.id);
+    level = client.getLevel.get(message.author.id, message.guild.id);
     // get level and set level
     if (!level) {
         let insertLevel = sql.prepare("INSERT OR REPLACE INTO levels (id, user, guild, xp, level, totalXP) VALUES (?,?,?,?,?,?);");
@@ -185,8 +181,8 @@ module.exports = async (client, message) => {
         // add cooldown to user
         recentMessages.push(message.content);
         setTimeout(function() {
-			recentMessages = [];
-		}, 5000);
+            recentMessages = [];
+        }, 5000);
     }
     // level up, time to add level roles
     const member = message.member;
