@@ -4,8 +4,8 @@ const sql = new SQlite('./mainDB.sqlite');
 const client = new Discord.Client();
 
 module.exports = {
-    name: 'channel-levleup',
-    aliases: ['setchannel', 'channellevelup'],
+    name: 'channel-levelup',
+    aliases: ['setchannel', 'channelevelup'],
     category: "Leveling",
     description: "Set specific channel to send level up message",
     cooldown: 3,
