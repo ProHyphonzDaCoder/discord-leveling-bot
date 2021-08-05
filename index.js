@@ -211,15 +211,10 @@ client.on("message", message => {
                 level.level += 1;
 
         let levelUpMsg;
-        let embed = new Discord.MessageEmbed()
-              .setAuthor(message.author.tag, message.author.displayAvatarURL({ dynamic: true }))
-              .setColor("RANDOM")
-              .setThumbnail(message.author.displayAvatarURL({ dynamic: true }))
-              .setTimestamp();
 
               if(!customSettings)
               {
-                embed.setDescription(`**Congratulations** ${message.author}! You have now leveled up to **level ${level.level}**`);
+   
                 levelUpMsg = `**Congratulations** ${message.author}! You have now leveled up to **level ${level.level}**`;
               } else {
                 function antonymsLevelUp(string) {
@@ -228,19 +223,19 @@ client.on("message", message => {
                     .replace(/{xp}/i, `${level.xp}`)
                     .replace(/{level}/i, `${level.level}`)
                 }
-                embed.setDescription(antonymsLevelUp(customSettings.levelUpMessage.toString()));
+                
                 levelUpMsg = antonymsLevelUp(customSettings.levelUpMessage.toString());
               }
         // using try catch if bot have perms to send EMBED_LINKS      
         try {
           if(!channelLevel || channelLevel.channel == "Default")
           {
-            message.channel.send(embed);
+            message.channel.send(levelUpMg);
           } else {
             let channel = message.guild.channels.cache.get(channelLevel.channel)
             const permissionFlags = channel.permissionsFor(message.guild.me);
             if(!permissionFlags.has("SEND_MESSAGES") || !permissionFlags.has("VIEW_CHANNEL")) return;
-            channel.send(embed);
+            channel.send(levelUpMsg);
           }
         } catch (err) {
           if(!channelLevel || channelLevel.channel == "Default")
