@@ -153,39 +153,13 @@ if(!cancelCommand) {
                 .setTimestamp();
 
             if (!customSettings) {
-                embed.setDescription(`**Congratulations** ${message.author}! You have now leveled up to **level ${level.level}**`);
                 levelUpMsg = `**Congratulations** ${message.author}! You have now leveled up to **level ${level.level}**`;
             } else {
-                function antonymsLevelUp(string) {
-                    return string
-                        .replace(/{member}/i, `${message.member}`)
-                        .replace(/{xp}/i, `${level.xp}`)
-                        .replace(/{level}/i, `${level.level}`)
-                }
-                embed.setDescription(antonymsLevelUp(customSettings.levelUpMessage.toString()));
                 levelUpMsg = antonymsLevelUp(customSettings.levelUpMessage.toString());
             }
-            // using try catch if bot have perms to send EMBED_LINKS      
-            try {
-                if (!channelLevel || channelLevel.channel == "Default") {
-                    message.channel.send(embed);
-                } else {
-                    let channel = message.guild.channels.cache.get(channelLevel.channel)
-                    const permissionFlags = channel.permissionsFor(message.guild.me);
-                    if (!permissionFlags.has("SEND_MESSAGES") || !permissionFlags.has("VIEW_CHANNEL")) return;
-                    channel.send(embed);
-                }
-            } catch (err) {
-                if (!channelLevel || channelLevel.channel == "Default") {
-                    message.channel.send(levelUpMsg);
-                } else {
-                    let channel = message.guild.channels.cache.get(channelLevel.channel)
-                    const permissionFlags = channel.permissionsFor(message.guild.me);
-                    if (!permissionFlags.has("SEND_MESSAGES") || !permissionFlags.has("VIEW_CHANNEL")) return;
-                    channel.send(levelUpMsg);
-                }
-            }
-        };
+
+            message.channel.send(levelUpMsg);
+		}
         client.setLevel.run(`${message.author.id}-${message.guild.id}`, message.author.id, message.guild.id, level.xp, level.level, level.totalXP);
         // add cooldown to user
         setTimeout(function() {
