@@ -142,24 +142,18 @@ if(!cancelCommand) {
             level.level += 1;
 
             let levelUpMsg;
-            let embed = new Discord.MessageEmbed()
-                .setAuthor(message.author.tag, message.author.displayAvatarURL({
-                    dynamic: true
-                }))
-                .setColor("RANDOM")
-                .setThumbnail(message.author.displayAvatarURL({
-                    dynamic: true
-                }))
-                .setTimestamp();
 
-            if (!customSettings) {
-                levelUpMsg = `**Congratulations** ${message.author}! You have now leveled up to **level ${level.level}**`;
-            } else {
-                levelUpMsg = antonymsLevelUp(customSettings.levelUpMessage.toString());
+                function antonymsLevelUp(string) {
+                    return string
+                        .replace(/{member}/i, `${message.member}`)
+                        .replace(/{xp}/i, `${level.xp}`)
+                        .replace(/{level}/i, `${level.level}`)
+                }
+                message.channel.send(antonymsLevelUp(customSettings.levelUpMessage.toString()));
+            
+
             }
-
-            message.channel.send(levelUpMsg);
-		}
+        };
         client.setLevel.run(`${message.author.id}-${message.guild.id}`, message.author.id, message.guild.id, level.xp, level.level, level.totalXP);
         // add cooldown to user
         setTimeout(function() {
