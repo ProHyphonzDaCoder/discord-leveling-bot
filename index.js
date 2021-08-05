@@ -16,7 +16,7 @@ const talkedRecently = new Map();
 const config = require("./config.json")
 
 // Events
-<<<<<<< HEAD
+//<<<<<<< HEAD
 client.login(config.token)
 /*
 <<<<<<< HEAD
@@ -30,10 +30,10 @@ fs.readdir("./events/", (err, files) => {
     });
 =======
 */
-=======
+//=======
 client.login(config.token) 
 
->>>>>>> parent of e1ad200 (Add bot status)
+//>>>>>>> parent of e1ad200 (Add bot status)
 client.on("ready", () => {
   // Check if the table "points" exists.
     const levelTable = sql.prepare("SELECT count(*) FROM sqlite_master WHERE type='table' AND name = 'levels';").get();
@@ -151,7 +151,7 @@ client.on("message", (message) => {
   timestamps.set(message.author.id, now);
   setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
 
-<<<<<<< HEAD
+//<<<<<<< HEAD
     try {
         command.execute(message, args);
     } catch (error) {
@@ -160,14 +160,7 @@ client.on("message", (message) => {
     }
 //>>>>>>> parent of b1b1286 (Fix formatting issue)
 });
-=======
-  try {
-    command.execute(message, args);
-  } catch (error) {
-    console.error(error);
-    message.reply("There was an error executing that command.").catch(console.error);
-  }
-});
+
 
 // XP Messages 
 client.on("message", message => {
@@ -283,4 +276,4 @@ client.on("message", message => {
              member.roles.add(roles.roleID);
             }}
 })
->>>>>>> parent of e1ad200 (Add bot status)
+//>>>>>>> parent of e1ad200 (Add bot status)
