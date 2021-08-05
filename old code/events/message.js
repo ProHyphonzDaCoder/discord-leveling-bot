@@ -88,6 +88,12 @@ if(!cancelCommand) {
     }
 }
 
+    // Settings table
+    const settingsTable = sql.prepare("SELECT count(*) FROM sqlite_master WHERE type='table' AND name = 'settings';").get();
+    if (!settingsTable['count(*)']) {
+        sql.prepare("CREATE TABLE settings (guild TEXT PRIMARY KEY, levelUpMessage TEXT, customXP INTEGER, customCooldown INTEGER);").run();
+    }
+	
     // Check if the table "points" exists.
     const levelTable = sql.prepare("SELECT count(*) FROM sqlite_master WHERE type='table' AND name = 'levels';").get();
 
@@ -97,7 +103,7 @@ if(!cancelCommand) {
 
     client.getLevel = sql.prepare("SELECT * FROM levels WHERE user = ? AND guild = ?");
     client.setLevel = sql.prepare("INSERT OR REPLACE INTO levels (id, user, guild, xp, level, totalXP) VALUES (?, ?, ?, ?, ?, ?);");
-    level = client.getLevel.get(message.author.id, message.guild.id);
+    var level = client.getLevel.get(message.author.id, message.guild.id);
     // get level and set level
     if (!level) {
         let insertLevel = sql.prepare("INSERT OR REPLACE INTO levels (id, user, guild, xp, level, totalXP) VALUES (?,?,?,?,?,?);");
@@ -109,8 +115,6 @@ if(!cancelCommand) {
 
     let customSettings = sql.prepare("SELECT * FROM settings WHERE guild = ?").get(message.guild.id);
     let channelLevel = sql.prepare("SELECT * FROM channel WHERE guild = ?").get(message.guild.id);
-
-    const lvl = level.level;
 
     let getXpfromDB;
     let getCooldownfromDB;
@@ -128,7 +132,7 @@ if(!cancelCommand) {
     const nextXP = level.level * 2 * 250 + 250
     // Anti-spam to prevent users from posting spam in the hopes of leveling up
     if (recentMessages.includes(message.content) || message.content.startsWith("!")) {
-        return;
+        return console.log('yes');
     } else { // cooldown is 10 seconds
 	        recentMessages.push(message.content);
 
@@ -166,7 +170,7 @@ if(!cancelCommand) {
 
     let roles = Roles.get(message.guild.id, client.getLevel.get(message.author.id, message.guild.id).level)
     if (!roles) return;
-    if (lvl >= roles.level) {
+    if (client.getLevel.get(message.author.id, message.guild.id).level >= roles.level) {
         if (roles) {
             if (member.roles.cache.get(roles.roleID)) {
                 return;
