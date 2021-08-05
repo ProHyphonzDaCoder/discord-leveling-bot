@@ -19,6 +19,7 @@ module.exports = async (client, message) => {
     if (!message.guild) return;
 
     var recentMessages = [];
+	var cancelCommand = false;
 
     const currentPrefix = sql.prepare("SELECT * FROM prefix WHERE guild = ?").get(message.guild.id);
     const Prefix = config.prefix;
@@ -32,26 +33,30 @@ module.exports = async (client, message) => {
 
     const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     const prefixRegex = new RegExp(`^(<@!?${client.user.id}>|${escapeRegex(getPrefix)})\\s*`);
-    if (!prefixRegex.test(message.content)) return;
+    if (!prefixRegex.test(message.content)) { cancelCommand = true; }
 
+if(!cancelCommand) {
     const [, matchedPrefix] = message.content.match(prefixRegex);
 
     const args = message.content.slice(matchedPrefix.length).trim().split(/ +/);
     const commandName = args.shift().toLowerCase();
 
+	if(!cancelCommand)  {
     // Command Handler
     const commandFiles = readdirSync(join(__dirname, "../commands")).filter((file) => file.endsWith(".js"));
     for (const file of commandFiles) {
         const command = require(join(__dirname, "../commands", `${file}`));
         client.commands.set(command.name, command);
     }
+	}
 
 
     const command =
         client.commands.get(commandName) ||
         client.commands.find((cmd) => cmd.aliases && cmd.aliases.includes(commandName));
+		
 
-    if (!command) return;
+    if (!command) cancelCommand = true;
 
     if (!cooldowns.has(command.name)) {
         cooldowns.set(command.name, new Discord.Collection());
@@ -74,13 +79,15 @@ module.exports = async (client, message) => {
 
     timestamps.set(message.author.id, now);
     setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
-
+if(!cancelCommand) {
     try {
         command.execute(message, args);
     } catch (error) {
         console.error(error);
         message.reply("There was an error executing that command.").catch(console.error);
     }
+}
+}
     // Check if the table "points" exists.
     const levelTable = sql.prepare("SELECT count(*) FROM sqlite_master WHERE type='table' AND name = 'levels';").get();
 
@@ -123,6 +130,8 @@ module.exports = async (client, message) => {
     if (recentMessages.includes(message.content) || message.content.startsWith("!")) {
         return;
     } else { // cooldown is 10 seconds
+	        recentMessages.push(message.content);
+
         level.xp += generatedXp;
         level.totalXP += generatedXp;
 
@@ -179,7 +188,6 @@ module.exports = async (client, message) => {
         };
         client.setLevel.run(`${message.author.id}-${message.guild.id}`, message.author.id, message.guild.id, level.xp, level.level, level.totalXP);
         // add cooldown to user
-        recentMessages.push(message.content);
         setTimeout(function() {
             recentMessages = [];
         }, 5000);
