@@ -87,7 +87,7 @@ if(!cancelCommand) {
         message.reply("There was an error executing that command.").catch(console.error);
     }
 }
-}
+
     // Check if the table "points" exists.
     const levelTable = sql.prepare("SELECT count(*) FROM sqlite_master WHERE type='table' AND name = 'levels';").get();
 
