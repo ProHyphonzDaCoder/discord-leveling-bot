@@ -249,7 +249,7 @@ client.on("message", message => {
           }
         }
       };
-      client.setLevel.run(`${message.author.id}-${message.guild.id}`, message.author.id, message.guild.id, lvl, level.xp);
+      client.setLevel.run(`${message.author.id}-${message.guild.id}`, message.author.id, message.guild.id, level.xp, lvl, level.totalXP);
       // add cooldown to user
     talkedRecently.set(message.author.id, Date.now() + getCooldownfromDB);
     setTimeout(() => talkedRecently.delete(message.author.id, Date.now() + getCooldownfromDB))    
