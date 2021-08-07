@@ -4,7 +4,7 @@ A leveling &amp; EXP Discord bot with anti-spam features, a leveling rank card s
 <b>Note: This entire bot is a huge mess right now. If you want to submit a Pull Request to help clean it up, feel free to do so.</b>
 
 ## Release plans
-September 10th, 2021 - V1.0.0 (Improved anti-spam, refactored code)
+September 11th, 2021 - V1.0.0 (Improved anti-spam, refactored code)
 
 ## Credits
 I based this off of another repository, but heavily modified it: https://github.com/roefinoavrililo/Discord.JS-Leveling-Bot
