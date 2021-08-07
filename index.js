@@ -50,7 +50,7 @@ client.on("ready", () => {
       sql.prepare("CREATE TABLE background (user TEXT, guild TEXT, bg TEXT)").run();
     }
 
-    client.getBg = sql.prepare("SELECT bg FROM background WHERE user = ? AND guild = ?");
+    client.getBg = sql.prepare("SELECT bg FROM background WHERE user = ? AND guild = ?;");
     client.setBg = sql.prepare("INSERT OR REPLACE INTO background (user, guild, bg) VALUES (@user, @guild, @bg);");
 
   // Role table for levels
