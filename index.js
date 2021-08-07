@@ -5,8 +5,11 @@ const sql = new SQLite('./mainDB.sqlite')
 const { join } = require("path")
 const fs = require("fs");
 const { readdirSync } = require("fs");
+const { REST } = require('@discordjs/rest');
+const { Routes } = require('discord-api-types/v9');
+const { token } = require('./config.json');
 
-const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
+const client = new Discord.Client({ intents: [Discord.Intents.FLAGS.GUILDS, Discord.Intents.FLAGS.GUILD_MESSAGES] });
 
 client.commands = new Discord.Collection();
 const cooldowns = new Discord.Collection();
@@ -44,6 +47,23 @@ client.on("ready", () => {
 		client.commands.set(command.name, command);
 	}
 	
+
+const rest = new REST({ version: '9' }).setToken(token);
+
+(async () => {
+	try {
+		console.log('Started refreshing application (/) commands.');
+
+		await rest.put(
+			Routes.applicationCommands(client.user.id),
+			{ body: client.commands.map(({ execute, ...data }) => data) },
+		);
+
+		console.log('Successfully reloaded application (/) commands.');
+	} catch (error) {
+		console.error(error);
+	}
+})();
     // Check if the table "points" exists.
     const levelTable = sql.prepare("SELECT count(*) FROM sqlite_master WHERE type='table' AND name = 'levels';").get();
     if (!levelTable['count(*)']) {
@@ -251,7 +271,7 @@ client.on("message", message => {
           }
         }
       };
-      client.setLevel.run(`${message.author.id}-${message.guild.id}`, message.author.id, message.guild.id, level.xp, lvl, level.totalXP);
+      client.setLevel.run(`${message.author.id}-${message.guild.id}`, message.author.id, message.guild.id, level.xp, level.level, level.totalXP);
       // add cooldown to user
     talkedRecently.set(message.author.id, Date.now() + getCooldownfromDB);
     setTimeout(() => talkedRecently.delete(message.author.id, Date.now() + getCooldownfromDB))    
