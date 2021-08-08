@@ -7,11 +7,15 @@ const canvacord = require("canvacord");
 module.exports = {
     name: 'rank',
     aliases: ['rank'],
-    description: "Check a user's rank and XP",
+    description: "Get your rank or another member's rank",
     cooldown: 3,
     category: "Leveling",
     async execute(interaction) {
-        if(!interaction.isCommand()) return;
+        if(!interaction.isCommand()) return console.log("yes");
+
+        await interaction.deferReply()
+            .then(console.log("a"))
+            .catch(console.error);
 
         let user = interaction.user;
 
@@ -20,10 +24,10 @@ module.exports = {
 
 
 
-        const top10 = sql.prepare("SELECT * FROM levels WHERE guild = ? ORDER BY totalXP").all(message.guild.id);
-        let score = client.getScore.get(user.id, message.guild.id);
+        const top10 = sql.prepare("SELECT * FROM levels WHERE guild = ? ORDER BY totalXP").all(interaction.guild.id);
+        let score = client.getScore.get(user.id, interaction.guild.id);
         if (!score) {
-            return message.reply(`This user does not have any XP yet!`)
+            return interaction.editReply(`This user does not have any XP yet!`)
         }
         const levelInfo = score.level
         const nextXP = levelInfo * 2 * 250 + 250
@@ -33,27 +37,27 @@ module.exports = {
             return b.totalXP - a.totalXP
         });
         let ranking = rank.map(x => x.totalXP).indexOf(totalXP) + 1
-        if (!message.guild.me.hasPermission("ATTACH_FILES")) return message.reply(`**Missing Permission**: ATTACH_FILES or MESSAGE ATTACHMENTS`);
+        //if (!interaction.guild.me.hasPermission("ATTACH_FILES")) return interaction.editReply(`**Missing Permission**: ATTACH_FILES or MESSAGE ATTACHMENTS`);
 
         try {
             var cardBg = sql.prepare("SELECT bg FROM background WHERE user = ? AND guild = ?").get(user.id, message.guild.id).bg;
             var bgType = "IMAGE";
-            message.reply("Note: it appears that this user has a custom background set up. It may take slightly longer to load their profile.");
         } catch (e) {
             var cardBg = "#000000";
             var bgType = "COLOR";
         }
 
+console.log(interaction.member.presence);
         const rankCard = new canvacord.Rank()
-            .setAvatar(user.user.displayAvatarURL({
+            .setAvatar(user.displayAvatarURL({
                 format: "jpg"
             }))
-            .setStatus(user.user.presence.status, true, 1)
+            .setStatus(interaction.member.presence.status, true, 1)
             .setCurrentXP(xpInfo)
             .setRequiredXP(nextXP)
             .setProgressBar("#5AC0DE", "COLOR")
-            .setUsername(user.user.username)
-            .setDiscriminator(user.user.discriminator)
+            .setUsername(user.username)
+            .setDiscriminator(user.discriminator)
             .setRank(ranking)
             .setLevel(levelInfo)
             .setLevelColor("#5AC0DE")
@@ -63,7 +67,7 @@ module.exports = {
         rankCard.build()
             .then(data => {
                 const attachment = new Discord.MessageAttachment(data, "RankCard.png");
-                message.channel.send(attachment);
+                return interaction.editReply({attachments: [attachment]});
             });
 
     }
