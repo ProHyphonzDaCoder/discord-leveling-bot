@@ -34,17 +34,7 @@ fs.readdir("./events/", (err, files) => {
 
 //>>>>>>> parent of e1ad200 (Add bot status)
 client.on("ready", () => {
-
-	const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
-
-	for (const file of commandFiles) {
-		const command = require(`./commands/${file}`);
-		// set a new item in the Collection
-		// with the key as the command name and the value as the exported module
-		client.commands.set(command.name, command);
-	}
-	
-    // Check if the table "points" exists.
+  // Check if the table "points" exists.
     const levelTable = sql.prepare("SELECT count(*) FROM sqlite_master WHERE type='table' AND name = 'levels';").get();
     if (!levelTable['count(*)']) {
       sql.prepare("CREATE TABLE levels (id TEXT PRIMARY KEY, user TEXT, guild TEXT, xp INTEGER, level INTEGER, totalXP INTEGER);").run();
@@ -100,6 +90,13 @@ client.on("ready", () => {
 
     console.log(`Logged in as ${client.user.username}`)
 });
+
+// Command Handler
+const commandFiles = readdirSync(join(__dirname, "commands")).filter((file) => file.endsWith(".js"));
+for (const file of commandFiles) {
+  const command = require(join(__dirname, "commands", `${file}`));
+  client.commands.set(command.name, command);
+}
 
 // Message Events
 client.on("message", (message) => {
