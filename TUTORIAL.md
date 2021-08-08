@@ -1,4 +1,4 @@
-# How to install the bot
+# How to setup this leveling bot
 
 ## Installing
 
