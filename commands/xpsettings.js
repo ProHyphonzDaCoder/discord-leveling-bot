@@ -1,38 +1,47 @@
-const Discord = require("discord.js");
 const SQlite = require("better-sqlite3");
 const sql = new SQlite('./mainDB.sqlite');
-const client = new Discord.Client({
-    intents: [Discord.Intents.FLAGS.GUILDS, Discord.Intents.FLAGS.GUILD_MESSAGES, Discord.Intents.FLAGS.GUILD_PRESENCES],
-});
+
 module.exports = {
     name: 'xpsettings',
     aliases: ['setxp', 'set-xp', 'xp-settings'],
     category: "Leveling",
     description: "Set custom XP and Cooldown",
     cooldown: 3,
-    async execute (message, args) {
-        if(!message.member.hasPermission("MANAGE_GUILD")) return message.reply(`You do not have permission to use this command!`);
-
-        if(!args.length) 
-            return message.reply(`Please provide a vaild argument! \`xpsettings (xp) (seconds)\``);
-
-        if(isNaN(args[0]) || isNaN(args[1]))
-            return message.reply(`Please provide a vaild argument! \`xpsettings (xp) (seconds)\``);
+    "options": [
+        {
+            // Name of the subcommand
+            "name": "xp",
+            // Short description of subcommand
+            "description": "The amount of XP is earned per a later specified amount of seconds",
+            // Type of input from user: https://discord.com/developers/docs/interactions/slash-commands#applicationcommandoptiontype
+            "type": 10,
+            // Whether the subcommand is required
+            "required": true,
+        },
+        {
+            "name": "seconds",
+            "description": "How many seconds it takes to earn the aforementioned XP amount",
+            "type": 10,
+            "required": true
+        }
+    ],
+    async execute (interaction) {
+        if(!interaction.member.permissions.has("MANAGE_GUILD")) return interaction.reply(`You do not have permission to use this command!`);
         
-        if(parseInt(args[0]) < 0)
-            return message.reply(`XP cannot be less than 0 XP!`);
+        if(interaction.options.getNumber("xp") < 1)
+            return interaction.reply(`XP cannot be less than 0 XP!`);
 
-        if(parseInt(args[1]) < 0)
-            return message.reply(`Cooldown cannot be less than 0 seconds!`);
+        if(interaction.options.getNumber("seconds") < 1)
+            return interaction.reply(`Cooldown cannot be less than 0 seconds!`);
 
-        let checkIf = sql.prepare("SELECT levelUpMessage FROM settings WHERE guild = ?").get(message.guild.id);
+        let checkIf = sql.prepare("SELECT levelUpMessage FROM settings WHERE guild = ?").get(interaction.guild.id);
         if(checkIf) {
-            sql.prepare(`UPDATE settings SET customXP = ? WHERE guild = ?`).run(parseInt(args[0]), message.guild.id);
-            sql.prepare(`UPDATE settings SET customCooldown = ? WHERE guild = ?`).run(parseInt(args[1]) * 1000, message.guild.id);
+            sql.prepare(`UPDATE settings SET customXP = ? WHERE guild = ?`).run(interaction.options.getNumber("xp"), interaction.guild.id);
+            sql.prepare(`UPDATE settings SET customCooldown = ? WHERE guild = ?`).run(interaction.options.getNumber("seconds") * 1000, interaction.guild.id);
         } else {
-            sql.prepare(`INSERT OR REPLACE INTO settings (guild, levelUpMessage, customXP, customCooldown) VALUES (?,?,?,?)`).run(message.guild.id, `**Congratulations** {member}! You have now leveled up to **level {level}**`, parseInt(args[0]), parseInt(args[1]) * 1000);
+            sql.prepare(`INSERT OR REPLACE INTO settings (guild, levelUpMessage, customXP, customCooldown) VALUES (?,?,?,?)`).run(interaction.guild.id, `**Congratulations** {member}! You have now leveled up to **level {level}**`, interaction.options.getNumber("xp"), interaction.options.getNumber("seconds") * 1000);
         }
         
-        return message.channel.send(`Users from now will gain 1XP - ${parseInt(args[0])}XP/${parseInt(args[1])}s`);
+        return interaction.reply(`Users from now will gain  ${interaction.options.getNumber("xp")}XP/${interaction.options.getNumber("seconds")}s`);
     }
 }
