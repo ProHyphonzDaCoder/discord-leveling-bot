@@ -1,9 +1,6 @@
 const Discord = require("discord.js");
 const SQlite = require("better-sqlite3");
 const sql = new SQlite('./mainDB.sqlite');
-const client = new Discord.Client({
-    intents: [Discord.Intents.FLAGS.GUILDS, Discord.Intents.FLAGS.GUILD_MESSAGES, Discord.Intents.FLAGS.GUILD_PRESENCES],
-});
 module.exports = {
     name: 'remove-level',
     aliases: ['removelevel'],
@@ -25,25 +22,25 @@ module.exports = {
             "required": false
         }
     ],    
-    async execute (message, args) {
+    async execute (interaction) {
         let user = interaction.options.getUser("user", false) || interaction.user;
 
-        if(!message.member.hasPermission("MANAGE_GUILD")) return message.reply(`You do not have permission to use this command!`);
+        if(!interaction.member.permissions.has("MANAGE_GUILD")) return interaction.reply(`You do not have permission to use this command!`);
 
-        const levelArgs = interaction.getInteger("level");
+        const levelArgs = interaction.options.getInteger("level");
 
-        client.getScore = sql.prepare("SELECT * FROM  WHERE user = ? AND guild = ?");
-        client.setScore = sql.prepare("INSERT OR REPLACE INTO levels (id, user, guild, xp, level, totalXP) VALUES (@id, @user, @guild, @xp, @level, @totalXP);");
+        interaction.client.getScore = sql.prepare("SELECT * FROM levels WHERE user = ? AND guild = ?");
+        interaction.client.setScore = sql.prepare("INSERT OR REPLACE INTO levels (id, user, guild, xp, level, totalXP) VALUES (@id, @user, @guild, @xp, @level, @totalXP);");
         if(!user) {
             return interaction.reply(`Please mention an user!`)
         } else {
             if(isNaN(levelArgs) || levelArgs < 1) {
                 return interaction.reply(`Please provide a valid number!`)
             } else {
-                let score = client.getScore.get(user.id, message.guild.id);
+                let score = interaction.client.getScore.get(user.id, interaction.guild.id);
                 if(!score) {
                     score = {
-                        id: `${message.guild.id}-${user.id}`,
+                        id: `${interaction.message.guild.id}-${interaction.user.id}`,
                         user: interaction.user.id,
                         guild: interaction.guild.id,
                         xp: 0,
@@ -54,16 +51,16 @@ module.exports = {
                 if(score.level - levelArgs < 1) {
                     return interaction.reply(`You cannot remove levels from this user!`)
                 }    
- 		score.level -= levelArgs
-                const newTotalXP = levelArgs - 1
+ 		        score.level -= levelArgs
+                const newTotalXP = levelArgs - 1;
                 let embed = new Discord.MessageEmbed()
                     .setTitle(`Success!`)
                     .setDescription(`Successfully removed level ${levelArgs} from ${user.toString()}!`)
                     .setColor("#5AC0DE");
                 
                 score.totalXP -= newTotalXP * 2 * 250 + 250
-                client.setScore.run(score);
-                return message.channel.send(embed);
+                interaction.client.setScore.run(score);
+                return interaction.reply(embed);
             }
         }
     }
