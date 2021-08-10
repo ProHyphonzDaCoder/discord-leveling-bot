@@ -23,13 +23,13 @@ module.exports = {
     }*/
     const embed = new Discord.MessageEmbed()
       .setTitle(`${interaction.guild.name} Ranking`)
-      .setColor("#5AC0DE")
-      .setTimestamp()
-      .setDescription(`Top 10 Leaderboard`);
+      .setColor("TEAL")
+      .setDescription(`${interaction.guild.name}'s Leaderboard`);
 
 
     if (top10.length < 1) {
-      embed.setDescription(`There are no users in this server's leaderboard.`)
+      embed.setDescription(`There are no users in this server's leaderboard.`);
+      return interaction.editReply(embed);
     }
 
     var state = {
@@ -69,24 +69,24 @@ module.exports = {
 
         const background = await Canvas.loadImage('https://cdn.discordapp.com/attachments/823984739526377532/874328086051717120/unknown.png');
 
-        context.drawImage(background, 0, i * 50, canvas.width, 57);
+        context.drawImage(background, 0, i * 55, canvas.width, 50);
 
-        const avatar = await Canvas.loadImage(interaction.user.displayAvatarURL({
-          format: 'jpg'
+        const avatar = await Canvas.loadImage(interaction.client.users.cache.find(user => user.id === myList[i].user).displayAvatarURL({
+          format: 'png'
         }));
 
 
         context.save();
-        roundedImage(i * 20.5,i * 20.5,58,58, 5, context);
+        roundedImage(0,i * 55,50,50, 5, context);
         context.clip();
-        context.drawImage(avatar,10,10,102,77);
-        context.drawImage(avatar, i * 20.5, i * 20.5, 58, 58);
+        //context.drawImage(avatar, 0, i * (39 *2), 102,77);
+        context.drawImage(avatar, 0, i * 55, 50, 50);
 
         context.restore();
 
         context.font = '28px sans-serif';
         context.fillStyle = '#ffffff';
-        context.fillText(`#${Number(i) + 1} • ${interaction.client.users.cache.find(user => user.id === myList[i].user).tag} • Level ${myList[i].level}`, 65, 35 + 4);
+        context.fillText(`#${Number(i) + 1} • ${interaction.client.users.cache.find(user => user.id === myList[i].user).tag} • Level ${myList[i].level}`, 65, 45 + (45 * i));
 
 
       }
@@ -110,6 +110,7 @@ module.exports = {
       const attachment = new Discord.MessageAttachment(await buildTable(), "lb.png");
       //console.log(attachment);
       //console.log(images);
+      
       return interaction.editReply({
         files: [attachment]
       });

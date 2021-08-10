@@ -12,17 +12,17 @@ module.exports = {
     cooldown: 3,
     "options": [
         {
-            "name": "user",
-            "description": "The user of whom to remove level (defaults to you)",
-            "type": 6,
-            "required": false
-        },        
-        {
             "name": "level",
             "description": "The level to take from the user",
             // Type of input from user: https://discord.com/developers/docs/interactions/slash-commands#applicationcommandoptiontype
             "type": 4,
             "required": true,
+        },
+        {
+            "name": "user",
+            "description": "The user of whom to remove level (defaults to you)",
+            "type": 6,
+            "required": false
         }
     ],    
     async execute (message, args) {
