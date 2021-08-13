@@ -1,9 +1,7 @@
 const { MessageEmbed } = require("discord.js");
 const config = require("../config.json");
+const client = require("discord.js");
 const Discord = require("discord.js");
-const client = new Discord.Client({
-  intents: [Discord.Intents.FLAGS.GUILDS, Discord.Intents.FLAGS.GUILD_MESSAGES, Discord.Intents.FLAGS.GUILD_PRESENCES],
-});
 
 module.exports = {
   name: "help",
