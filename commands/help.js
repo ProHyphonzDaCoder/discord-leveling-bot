@@ -11,50 +11,42 @@ module.exports = {
   category: "Utility",
   cooldown : 3,
   description: "Display Help Commands",
-  "options": [{
-    "name": "command",
-    "description": "The command you want to see help for (optional, only for specific help)",
-    // Type of input from user: https://discord.com/developers/docs/interactions/slash-commands#applicationcommandoptiontype
-    "type": 3,
-    "required": false,
-}
-],
-  async execute(interaction) {
+  async execute(message, args) {
 const prefix = config.prefix
-    if (!interaction.guild.me.permissions.has("EMBED_LINKS")) return interaction.channel.send("Missing Permission: `EMBED_LINKS`")
+    if (!message.guild.me.hasPermission("EMBED_LINKS")) return message.channel.send(`Missing Permission: EMBED_LINKS`)
 
-    const { commands } = interaction.client;
+    const { commands } = message.client;
 
-    if (!interaction.options.getString("command")) {
+    if (!args.length) {
 
     let help = new MessageEmbed()
       .setColor("#5AC0DE")
-      .setAuthor(`${interaction.guild.name} Help Menu`)
+      .setAuthor(`${message.guild.name} Help Menu`)
       .addFields(
         { name: `Leveling Commands`, value: `\`${prefix}rank\`
-\`${prefix}bg\`
-\`${prefix}leaderboard\``},
+		\`${prefix}bg\`
+		\`${prefix}leaderboard\`
+		\`${prefix}role-level\`
+		\`${prefix}add-level\`
+		\`${prefix}blacklist\`
+		\`${prefix}levelupmessage\`
+		\`${prefix}xpsettings\`
+		\`${prefix}channel-levelup\``},
       )
       .addFields(
-        { name: `Configuration Commands (admin-only)`, value: `\`${prefix}prefix\`
-\`${prefix}levelupmessage\`
-\`${prefix}xpsettings\`
-\`${prefix}channel-levelup\`
-\`${prefix}role-level\`
-\`${prefix}add-level\`
-\`${prefix}blacklist\``},
+        { name: `Configuration Commands (admin-only)`, value: `\`${prefix}prefix\``},
       )
       .setTimestamp();
 
-    return interaction.reply({embeds: [help]});
+    return message.channel.send(help);
      
     }
 
-    const name = interaction.options.getString("command").toLowerCase();
+    const name = args[0].toLowerCase();
     const command = commands.get(name) || commands.find(c => c.aliases && c.aliases.includes(name))
 
     if (!command) {
-      return interaction.reply('That\'s not a valid command!');
+      return message.reply('That\'s not a valid command!');
         }
     
         let embed = new Discord.MessageEmbed()
@@ -70,6 +62,6 @@ const prefix = config.prefix
         ].join("\n"));
     
     
-    interaction.channel.send({embeds: [embed]});
+    message.channel.send(embed);
   }
 };

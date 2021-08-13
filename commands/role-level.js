@@ -3,135 +3,111 @@ const config = require('../config.json')
 const prefix = config.prefix;
 const SQlite = require("better-sqlite3");
 const sql = new SQlite('./mainDB.sqlite');
+const client = new Discord.Client({ intents: [Discord.Intents.FLAGS.GUILDS, Discord.Intents.FLAGS.GUILD_MESSAGES] });
 
 module.exports = {
     name: 'role-level',
     aliases: ['rlevel', 'level-roles'],
     description: "Rewards role when user leveled up to a certain level",
     category: "Leveling",
-    "options": [
-        {
-            "name": "level",
-            "description": "The level to tie a role to",
-            // Type of input from user: https://discord.com/developers/docs/interactions/slash-commands#applicationcommandoptiontype
-            "type": 4,
-            "required": false,
-        },
-        {
-            "name": "role",
-            "description": "The role of which the aforementioned level is tied to",
-            "type": 8,
-            "required": false
-        }
-    ],    
     cooldown: 3,
-    async execute (interaction) {
-        await interaction.deferReply();
-
-        if(!interaction.guild.me.permissions.has("MANAGE_ROLES")) interaction.editReply(`I do not have permission to manage roles!`);
-        if(!interaction.member.permissions.has("MANAGE_ROLES") || !interaction.member.permissions.has("MANAGE_GUILD")) return interaction.reply(`You do not have permission to use this command!`);
+    async execute (message, args) {
+        if(!message.guild.me.hasPermission("MANAGE_ROLES")) return message.reply(`I do not have permission to manage roles!`);
+        if(!message.member.hasPermission("MANAGE_ROLES") || !message.member.hasPermission("MANAGE_GUILD")) return message.reply(`You do not have permission to use this command!`);
 
 
-        if(!interaction.options.getInteger("level")) {
+        if(!args.length) {
             let embed = new Discord.MessageEmbed()
-                .setTitle(`Leveling Roles Setup`)
-                .setDescription(`Rewards role when user leveled up to a certain level`)
-                .addFields({ name: `${prefix}role-level add <level> <@role>`, value: `Sets a role to be given to user when they leveled up to certain level.`})
-                .addFields({ name: `${prefix}role-level remove <level>`, value: `Removes the role set at the specified level.`})
-                .addFields({ name: `${prefix}role-level show`, value: `Shows all roles set to levels.`})
-                .setColor("#5AC0DE");
+            .setTitle(`Leveling Roles Setup`)
+            .setDescription(`Rewards role when user leveled up to a certain level`)
+            .addFields({ name: `${prefix}role-level add <level> <@role>`, value: `Sets a role to be given to user when they leveled up to certain level.`})
+            .addFields({ name: `${prefix}role-level remove <level>`, value: `Removes the role set at the specified level.`})
+            .addFields({ name: `${prefix}role-level show`, value: `Shows all roles set to levels.`})
+            .setColor("#5AC0DE");
 
-            return interaction.channel.send(embed);
+        return message.channel.send(embed);
         }
 
-        if(!interaction.options.getRole("role")) {
-            method = "show";
-        } else { 
-            method = "add";
-        }
+        const method = args[0]
+        const levelArgs = parseInt(args[1])
+        args.shift()
+        args.shift()
+        const roleName = args.join(' ')
 
-        const levelArgs = interaction.options.getInteger("level");
-        const role = interaction.options.getRole("role");
-
-        interaction.client.getRole = sql.prepare("SELECT * FROM roles WHERE guildID = ? AND roleID = ? AND level = ?");
-        interaction.client.setRole = sql.prepare("INSERT OR REPLACE INTO roles (guildID, roleID, level) VALUES (@guildID, @roleID, @level);");
+        const role = message.guild.roles.cache.find(r => (r.name === roleName.toString()) || (r.id === roleName.toString().replace(/[^\w\s]/gi, '')));
+        client.getRole = sql.prepare("SELECT * FROM roles WHERE guildID = ? AND roleID = ? AND level = ?");
+        client.setRole = sql.prepare("INSERT OR REPLACE INTO roles (guildID, roleID, level) VALUES (@guildID, @roleID, @level);");
 
         if(method === 'add') {
             if(isNaN(levelArgs) && !levelArgs || levelArgs < 1) {
-                return interaction.reply(`Please provide a level to set.`);
+                return message.reply(`Please provide a level to set.`);
             } else {
                 if(!role) {
-                    return interaction.reply(`You did not provide a role to set!`);
+                    return message.reply(`You did not provide a role to set!`);
                 } else {
-                let Role = interaction.client.getRole.get(interaction.guild.id, role.id, levelArgs) 
+                let Role = client.getRole.get(message.guild.id, role.id, levelArgs) 
                 if(!Role) {
                     Role = {
-                        guildID: interaction.guild.id,
-                        roleID: role.id,
-                        level: levelArgs
+                    guildID: message.guild.id,
+                    roleID: role.id,
+                    level: levelArgs
                     }
-                    interaction.client.setRole.run(Role)
+                    client.setRole.run(Role)
                     let embed = new Discord.MessageEmbed()
-                        .setTitle(`Successfully set role!`)
-                        .setDescription(`${role} has been set for level ${levelArgs}`)  
-                        .setColor("#5AC0DE");
-                     return interaction.editReply({embeds: [embed]});
+                    .setTitle(`Successfully set role!`)
+                    .setDescription(`${role} has been set for level ${levelArgs}`)
+                    .setColor("#5AC0DE");
+                     return message.channel.send(embed);
                  } else if(Role){
-                    interaction.client.deleteLevel = sql.prepare(`DELETE FROM roles WHERE guildID = ? AND roleID = ? AND level = ?`)
-                    interaction.client.deleteLevel.run(interaction.guild.id, role.id, levelArgs)
-                    interaction.client.updateLevel = sql.prepare(`INSERT INTO roles(guildID, roleID, level) VALUES(?,?,?)`)
-                    interaction.client.updateLevel.run(interaction.guild.id, role.id, levelArgs);
-
-                    let embed = new Discord.MessageEmbed()
-                        .setTitle(`Successfully set role!`)
-                        .setDescription(`${role} has been updated for level ${levelArgs}`)
-                        .setColor("#5AC0DE");
-
-                    return interaction.editReply({embeds: [embed]})
+                    client.deleteLevel = sql.prepare(`DELETE FROM roles WHERE guildID = ? AND roleID = ? AND level = ?`)
+                    client.deleteLevel.run(message.guild.id, role.id, levelArgs);
+                    client.updateLevel = sql.prepare(`INSERT INTO roles(guildID, roleID, level) VALUES(?,?,?)`)
+                    client.updateLevel.run(message.guild.id, role.id, levelArgs)
+                     let embed = new Discord.MessageEmbed()
+                     .setTitle(`Successfully set role!`)
+                     .setDescription(`${role} has been updated for level ${levelArgs}`)
+                     .setColor("#5AC0DE");
+                      return message.channel.send(embed);
                  }
                 }
             }
         }
 
         if(method === 'show') {
-            const allRoles = sql.prepare(`SELECT * FROM roles WHERE guildID = ?`).all(interaction.guild.id)
+            const allRoles = sql.prepare(`SELECT * FROM roles WHERE guildID = ?`).all(message.guild.id)
             if(!allRoles) {
-                return interaction.reply(`There is no roles set!`)
+                return message.reply(`There is no roles set!`)
             } else {
                 let embed = new Discord.MessageEmbed()
-                    .setTitle(`${interaction.guild.name} Roles Level`)
-                    .setDescription(`\`${prefix}help role-level\` for more information`)
-                    .setColor("#5AC0DE");
-
+                .setTitle(`${message.guild.name} Roles Level`)
+                .setDescription(`\`${prefix}help role-level\` for more information`)
+                .setColor("RANDOM");
                 for(const data of allRoles) {
                     let LevelSet = data.level;
                     let RolesSet = data.roleID;
                  embed.addFields({ name: `\u200b`, value: `**Level ${LevelSet}**: <@&${RolesSet}>` }); 
                 }
-
-                return interaction.editReply({embed});
+                return message.channel.send({embed});
             }
         }
 
-        interaction.client.getLevel = sql.prepare(`SELECT * FROM roles WHERE guildID = ? AND level = ?`)
-        const levels = interaction.client.getLevel.get(interaction.guild.id, levelArgs)
+        client.getLevel = sql.prepare(`SELECT * FROM roles WHERE guildID = ? AND level = ?`)
+        const levels = client.getLevel.get(message.guild.id, levelArgs)
 
         if(method === 'remove' || method === 'delete') {
             if(isNaN(levelArgs) && !levelArgs || levelArgs < 1) {
-                return interaction.editReply(`Please provide a level to remove.`);
+                return message.reply(`Please provide a level to remove.`);
             } else {
                 if(!levels) {
-                    return interaction.editReply(`That isn't a valid level!`);
+                    return message.reply(`That isn't a valid level!`);
                 } else {
-                    interaction.client.deleteLevel = sql.prepare(`DELETE FROM roles WHERE guildID = ? AND level = ?`)
-                    interaction.client.deleteLevel.run(interaction.guild.id, levelArgs);
-
+                    client.deleteLevel = sql.prepare(`DELETE FROM roles WHERE guildID = ? AND level = ?`)
+                    client.deleteLevel.run(message.guild.id, levelArgs);
                     let embed = new Discord.MessageEmbed()
-                        .setTitle(`Successfully set role!`)
-                        .setDescription(`Role rewards for level ${levelArgs} has been removed.`)
-                        .setColor("#5AC0DE");
-
-                    return interaction.editReply({embeds: [embed]})
+                    .setTitle(`Successfully set role!`)
+                    .setDescription(`Role rewards for level ${levelArgs} has been removed.`)
+                    .setColor("RANDOM");
+                     return message.channel.send(embed);
                 }
             }
         }
