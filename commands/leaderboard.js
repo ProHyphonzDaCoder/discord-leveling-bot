@@ -21,6 +21,10 @@ module.exports = {
     /*if(parseFloat(args[0])  > Math.ceil(top10.length / 10)) {
       return message.reply(`Invalid page number! There are only ${Math.ceil(top10.length / 10)} pages`)
     }*/
+    const embed = new Discord.MessageEmbed()
+      .setTitle(`${interaction.guild.name} Ranking`)
+      .setColor("TEAL")
+      .setDescription(`${interaction.guild.name}'s Leaderboard`);
 
 
     if (top10.length < 1) {
@@ -46,12 +50,6 @@ module.exports = {
         'querySet': trimmedData,
         'pages': pages
       }
-    }
-
-    function shorten(text, len) {
-      if (typeof text !== "string") return "";
-      if (text.length <= len) return text;
-      return text.substr(0, len).trim() + "...";
     }
 
     async function buildTable() {
@@ -86,10 +84,9 @@ module.exports = {
 
         context.restore();
 
-        context.font = '26px sans-serif';
+        context.font = '28px sans-serif';
         context.fillStyle = '#ffffff';
-        console.log(context.measureText(`#${Number(i) + 1} • ${interaction.client.users.cache.find(user => user.id === myList[i].user).tag} • Level ${myList[i].level}`).width);
-        context.fillText(shorten(`#${Number(i) + 1} • ${interaction.client.users.cache.find(user => user.id === myList[i].user).tag} • Level ${myList[i].level}`, 30), 50, 45 + (45 * i));
+        context.fillText(`#${Number(i) + 1} • ${interaction.client.users.cache.find(user => user.id === myList[i].user).tag} • Level ${myList[i].level}`, 65, 45 + (45 * i));
 
 
       }
@@ -113,18 +110,9 @@ module.exports = {
       const attachment = new Discord.MessageAttachment(await buildTable(), "lb.png");
       //console.log(attachment);
       //console.log(images);
-
-      const embed = new Discord.MessageEmbed()
-        .setTitle(`${interaction.guild.name} Leaderboard`)
-        .setDescription("Use `/rank` if a user's rank is cut off.")
-        .setImage('attachment://lb.png')
-        .setColor("#5AC0DE");
-
-      return interaction.editReply(
-        { 
-          embeds: [embed],
-          files: [attachment]
-        }
-      )
+      
+      return interaction.editReply({
+        files: [attachment]
+      });
   }
 }

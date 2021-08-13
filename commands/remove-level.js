@@ -23,8 +23,6 @@ module.exports = {
         }
     ],    
     async execute (interaction) {
-        await interaction.deferReply();
-
         let user = interaction.options.getUser("user", false) || interaction.user;
 
         if(!interaction.member.permissions.has("MANAGE_GUILD")) return interaction.reply(`You do not have permission to use this command!`);
@@ -37,7 +35,7 @@ module.exports = {
             return interaction.reply(`Please mention an user!`)
         } else {
             if(isNaN(levelArgs) || levelArgs < 1) {
-                return interaction.editReply(`Please provide a valid number!`)
+                return interaction.reply(`Please provide a valid number!`)
             } else {
                 let score = interaction.client.getScore.get(user.id, interaction.guild.id);
                 if(!score) {
@@ -62,7 +60,7 @@ module.exports = {
                 
                 score.totalXP -= newTotalXP * 2 * 250 + 250
                 interaction.client.setScore.run(score);
-                return interaction.editReply({embeds: [embed]});
+                return interaction.reply(embed);
             }
         }
     }

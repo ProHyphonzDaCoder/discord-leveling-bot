@@ -1,6 +1,9 @@
 const Discord = require("discord.js");
 const SQlite = require("better-sqlite3");
 const sql = new SQlite('./mainDB.sqlite');
+const client = new Discord.Client({
+    intents: [Discord.Intents.FLAGS.GUILDS, Discord.Intents.FLAGS.GUILD_MESSAGES, Discord.Intents.FLAGS.GUILD_PRESENCES],
+});
 
 module.exports = {
     name: 'levelupmessage',
@@ -8,40 +11,39 @@ module.exports = {
     category: "Leveling",
     description: "Set custom level up message!",
     cooldown: 3,
-    "options": [
-        {
-            "name": "message",
-            "description": "The level up message to set",
-            // Type of input from user: https://discord.com/developers/docs/interactions/slash-commands#applicationcommandoptiontype
-            "type": 3,
-            "required": true,
-        }
-    ],   
-    async execute (interaction) {
-        if(!interaction.member.permissions.has("MANAGE_GUILD")) return interaction.reply(`You do not have permission to use this command!`);
+    async execute (message, args) {
+        if(!message.member.hasPermission("MANAGE_GUILD")) return message.reply(`You do not have permission to use this command!`);
 
-        interaction.client.getLevel = sql.prepare("SELECT * FROM levels WHERE user = ? AND guild = ?");
-        const level = interaction.client.getLevel.get(interaction.user.id, interaction.guild.id) 
+        if(!args.length) 
+            return message.reply(`Please provide a level up message!\n Example: \`Congrats {member} You've leveled up to level {level}!\``);
+
+        client.getLevel = sql.prepare("SELECT * FROM levels WHERE user = ? AND guild = ?");
+        const level = client.getLevel.get(message.author.id, message.guild.id) 
         if(!level) {
             let insertLevel = sql.prepare("INSERT OR REPLACE INTO levels (id, user, guild, xp, level, totalXP) VALUES (?,?,?,?,?,?);");
-            insertLevel.run(`${interaction.user.id}-${interaction.guild.id}`, interaction.user.id, interaction.guild.id, 0, 0, 0)
+            insertLevel.run(`${message.author.id}-${message.guild.id}`, message.author.id, message.guild.id, 0, 0, 0)
             return;
         }
 
+        let embed = new Discord.MessageEmbed()
+        .setAuthor(message.author.tag, message.author.displayAvatarURL({ dynamic: true }))
+        .setColor("RANDOM")
+        .setThumbnail(message.author.displayAvatarURL({ dynamic: true }))
+        .setTimestamp();
         function antonymsLevelUp(string) {
             return string
-              .replace(/{member}/i, `${interaction.member}`)
+              .replace(/{member}/i, `${message.member}`)
               .replace(/{xp}/i, `${level.xp}`)
               .replace(/{level}/i, `${level.level}`)
         }
-
-        let checkIf = sql.prepare("SELECT levelUpMessage FROM settings WHERE guild = ?").get(interaction.guild.id);
+        embed.setDescription(antonymsLevelUp(args.join(' ').toString()));
+        let checkIf = sql.prepare("SELECT levelUpMessage FROM settings WHERE guild = ?").get(message.guild.id);
         if(checkIf) {
-            sql.prepare(`UPDATE settings SET levelUpMessage = ? WHERE guild = ?`).run(interaction.options.getString("message"), interaction.guild.id);
+            sql.prepare(`UPDATE settings SET levelUpMessage = ? WHERE guild = ?`).run(args.join(' ').toString(), message.guild.id);
         } else {
-            sql.prepare(`INSERT OR REPLACE INTO settings (guild, levelUpMessage, customXP, customCooldown) VALUES (?,?,?,?)`).run(interaction.guild.id, args.join(' ').toString(), 16, 1000);
+            sql.prepare(`INSERT OR REPLACE INTO settings (guild, levelUpMessage, customXP, customCooldown) VALUES (?,?,?,?)`).run(message.guild.id, args.join(' ').toString(), 16, 1000);
         }
         
-        return interaction.reply(`The level up message has been set to ${antonymsLevelUp(interaction.options.getString("message"))}!`);
+        return message.channel.send(`Level Up Message has been set!`, embed);
     }
 }
