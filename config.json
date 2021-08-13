@@ -1,5 +1,5 @@
 {
-    "token": "Put your bot's token here",
-    "ownerID": "Put your bot's owner ID here",
+    "token": "Put your bot token here",
+    "ownerID": "Put your bot owner ID here",
     "prefix": "Put your bot's prefix here"
 }
