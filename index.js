@@ -238,7 +238,7 @@ client.on("messageCreate", message => {
       if (member.roles.cache.get(roles.roleID)) {
         return;
       }
-      if (!message.guild.me.hasPermission("MANAGE_ROLES")) {
+      if (!message.guild.me.permissions.has("MANAGE_ROLES")) {
         return
       }
       member.roles.add(roles.roleID);
