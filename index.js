@@ -6,7 +6,7 @@ const { join } = require("path")
 const fs = require("fs");
 const { readdirSync } = require("fs");
 
-const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
+const client = new Discord.Client()
 
 client.commands = new Discord.Collection();
 const cooldowns = new Discord.Collection();
@@ -31,6 +31,7 @@ fs.readdir("./events/", (err, files) => {
 =======
 */
 //=======
+client.login(config.token) 
 
 //>>>>>>> parent of e1ad200 (Add bot status)
 client.on("ready", () => {
