@@ -55,7 +55,7 @@ const rest = new REST({ version: '9' }).setToken(token);
 		console.log('Started refreshing application (/) commands.');
 
 		await rest.put(
-			Routes.applicationGuildCommands(client.user.id, "818600966512443443"),
+			Routes.applicationCommands(client.user.id),
 			{ body: client.commands.map(({ execute, ...data }) => data) },
 		);
 
@@ -120,6 +120,69 @@ const rest = new REST({ version: '9' }).setToken(token);
 
     console.log(`Logged in as ${client.user.username}`)
 });
+
+// Message Events
+client.on("message", (message) => {
+    if (message.author.bot) return;
+    if (!message.guild) return;
+		
+    const currentPrefix = sql.prepare("SELECT * FROM prefix WHERE guild = ?").get(message.guild.id);
+    const Prefix = config.prefix;
+    var getPrefix;
+    if(!currentPrefix) {
+      sql.prepare("INSERT OR REPLACE INTO prefix (serverprefix, guild) VALUES (?,?);").run(Prefix, message.guild.id)
+      getPrefix = Prefix.toString();
+    } else {
+      getPrefix = currentPrefix.serverprefix.toString();
+    }
+
+  const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const prefixRegex = new RegExp(`^(<@!?${client.user.id}>|${escapeRegex(getPrefix)})\\s*`);
+  if (!prefixRegex.test(message.content)) return;
+
+  const [, matchedPrefix] = message.content.match(prefixRegex);
+
+  const args = message.content.slice(matchedPrefix.length).trim().split(/ +/);
+  const commandName = args.shift().toLowerCase();
+
+  const command =
+    client.commands.get(commandName) ||
+    client.commands.find((cmd) => cmd.aliases && cmd.aliases.includes(commandName));
+
+  if (!command) return;
+
+  if (!cooldowns.has(command.name)) {
+    cooldowns.set(command.name, new Discord.Collection());
+  }
+
+  const now = Date.now();
+  const timestamps = cooldowns.get(command.name);
+  const cooldownAmount = (command.cooldown || 1) * 1000;
+
+  if (timestamps.has(message.author.id)) {
+    const expirationTime = timestamps.get(message.author.id) + cooldownAmount;
+
+    if (now < expirationTime) {
+      const timeLeft = (expirationTime - now) / 1000;
+      return message.reply(
+        `Please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.name}\` command.`
+      );
+    }
+  }
+
+  timestamps.set(message.author.id, now);
+  setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
+
+//<<<<<<< HEAD
+    try {
+        command.execute(message, args);
+    } catch (error) {
+        console.error(error);
+        message.reply("There was an error executing that command.").catch(console.error);
+    }
+//>>>>>>> parent of b1b1286 (Fix formatting issue)
+});
+
 
 // XP Messages 
 client.on("message", message => {

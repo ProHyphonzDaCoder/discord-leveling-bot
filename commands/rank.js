@@ -7,13 +7,14 @@ const canvacord = require("canvacord");
 module.exports = {
     name: 'rank',
     aliases: ['rank'],
-    description: "Check a user's rank and XP",
+    description: "Check users rank and xp",
     cooldown: 3,
     category: "Leveling",
-    async execute(interaction) {
-        if(!interaction.isCommand()) return;
+    async execute(message, args) {
 
-        let user = interaction.user;
+        let userArray = message.content.split(" ");
+        let userArgs = userArray.slice(1);
+        let user = message.mentions.members.first() || message.guild.members.cache.get(userArgs[0]) || message.guild.members.cache.find(x => x.user.username.toLowerCase() === userArgs.slice(0).join(" ") || x.user.username === userArgs[0]) || message.member;
 
         client.getScore = sql.prepare("SELECT * FROM levels WHERE user = ? AND guild = ?");
         client.setScore = sql.prepare("INSERT OR REPLACE INTO levels (id, user, guild, xp, level, totalXP) VALUES (@id, @user, @guild, @xp, @level, @totalXP);");

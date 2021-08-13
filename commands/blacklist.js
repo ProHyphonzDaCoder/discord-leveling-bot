@@ -7,7 +7,7 @@ module.exports = {
     name: 'blacklist',
     aliases: ['blacklist'],
     category: "Leveling",
-    description: "Blacklist user/channel from gaining XP",
+    description: "Blacklist user/channel from leveling up/gaining XP, to remove user/channel from blacklist, type `blacklist (user/channel) (mention user/channel) remove",
     cooldown: 3,
     async execute (message, args) {
         if(!message.member.hasPermission("MANAGE_GUILD")) return message.reply(`You do not have permission to use this command!`);
