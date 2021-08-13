@@ -10,7 +10,7 @@ module.exports = {
     category: "Leveling",
     description: "Set user Level and XP",
     cooldown: 3,
-    async execute (interaction) {
+    async execute (message, args) {
         let userArray = message.content.split(" ");
         let userArgs = userArray.slice(1);
         let user = message.mentions.members.first() || message.guild.members.cache.get(userArgs[0]) || message.guild.members.cache.find(x => x.user.username.toLowerCase() === userArgs.slice(0).join(" ") || x.user.username === userArgs[0])

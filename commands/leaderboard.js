@@ -15,7 +15,9 @@ module.exports = {
   async execute(interaction) {
     await interaction.deferReply();
 
-    //const currentPage = /*parseInt(args[0]) ||*/ 1;
+    var images = [];
+
+    const currentPage = /*parseInt(args[0]) ||*/ 1;
     const top10 = sql.prepare("SELECT * FROM levels WHERE guild = ? ORDER BY totalXP DESC;").all(interaction.guild.id);
     console.log(top10);
     /*if(parseFloat(args[0])  > Math.ceil(top10.length / 10)) {
@@ -29,9 +31,8 @@ module.exports = {
 
 
     if (top10.length < 1) {
-      embed.setDescription(`There are no users in this server's leaderboard.`)
+      embed.setDescription(`There is no user in leaderboard!`)
     }
-
     var state = {
       'querySet': top10,
       'page': 1,
@@ -53,10 +54,8 @@ module.exports = {
     }
 
     async function buildTable() {
-      var pagesData = pagination(state.querySet, state.page, state.rows);
-      var myList = pagesData.querySet;
-      const canvas = Canvas.createCanvas(559, 570);
-      const context = canvas.getContext('2d');
+      var pagesData = pagination(state.querySet, state.page, state.rows)
+      var myList = pagesData.querySet
       for (var i = 1 in myList) {
         let nextXP = myList[i].level * 2 * 250 + 250
         let totalXP = myList[i].totalXP
@@ -65,53 +64,52 @@ module.exports = {
         });
         let ranking = rank.map(x => x.totalXP).indexOf(totalXP) + 1
         let users;
+        const canvas = Canvas.createCanvas(500, 75);
+        const context = canvas.getContext('2d');
 
+        const background = await Canvas.loadImage('https://media.discordapp.net/attachments/871891380291653673/873985919785504879/unknown.png');
 
-        const background = await Canvas.loadImage('https://cdn.discordapp.com/attachments/823984739526377532/874328086051717120/unknown.png');
-
-        context.drawImage(background, 0, i * 50, canvas.width, 57);
+        context.drawImage(background, 0, 0, canvas.width, canvas.height);
 
         const avatar = await Canvas.loadImage(interaction.user.displayAvatarURL({
           format: 'jpg'
         }));
 
-
-        context.save();
-        roundedImage(i * 20.5,i * 20.5,58,58, 5, context);
-        context.clip();
-        context.drawImage(avatar,10,10,102,77);
-        context.drawImage(avatar, i * 20.5, i * 20.5, 58, 58);
-
-        context.restore();
+        context.drawImage(avatar, 12.5, 12.5, 50, 50);
 
         context.font = '28px sans-serif';
         context.fillStyle = '#ffffff';
-        context.fillText(`#${Number(i) + 1} • ${interaction.client.users.cache.find(user => user.id === myList[i].user).tag} • Level ${myList[i].level}`, 65, 35 + 4);
+        context.fillText(myList[i].user, 65, 50);
 
+        context.beginPath();
+        context.arc(125, 125, 100, 0, Math.PI * 2, true);
+        context.closePath();
+        context.clip();
 
+        images.push(canvas.toBuffer());
       }
-      return canvas.toBuffer('image/png');
+      embed.setFooter(`Page ${currentPage} / ${Math.ceil(top10.length / 10)}`)
     }
 
-    function roundedImage(x,y,width,height,radius, context){
-      context.beginPath();
-      context.moveTo(x + radius, y);
-      context.lineTo(x + width - radius, y);
-      context.quadraticCurveTo(x + width, y, x + width, y + radius);
-      context.lineTo(x + width, y + height - radius);
-      context.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-      context.lineTo(x + radius, y + height);
-      context.quadraticCurveTo(x, y + height, x, y + height - radius);
-      context.lineTo(x, y + radius);
-      context.quadraticCurveTo(x, y, x + radius, y);
-      context.closePath();
-    }
+    buildTable();
 
-      const attachment = new Discord.MessageAttachment(await buildTable(), "lb.png");
-      //console.log(attachment);
-      //console.log(images);
+    if (images.length > 1) {
+      joinImages(images, {
+        direction: "horizontal"
+      }).then((img) => {
+        image = new Discord.MessageAttachment(img, "lb.png");
+        // Save image as file
+        return interaction.editReply({
+          files: [img]
+        });
+      });
+    } else {
+      const attachment = new Discord.MessageAttachment(images[0], "lb.png");
+      console.log(attachment);
+      console.log(images);
       return interaction.editReply({
         files: [attachment]
       });
+    }
   }
 }
