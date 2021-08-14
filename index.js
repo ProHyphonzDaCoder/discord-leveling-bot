@@ -71,6 +71,7 @@ client.on("ready", () => {
       console.log('Successfully reloaded application (/) commands.');
     } catch (error) {
       console.error(error);
+
     }
   })();
   // Check if the table "points" exists.
