@@ -17,6 +17,10 @@ module.exports = {
             .then(console.log("a"))
             .catch(console.error);
 
+        await interaction.deferReply()
+            .then(console.log("a"))
+            .catch(console.error);
+
         let userArray = message.content.split(" ");
         let userArgs = userArray.slice(1);
         let user = message.mentions.members.first() || message.guild.members.cache.get(userArgs[0]) || message.guild.members.cache.find(x => x.user.username.toLowerCase() === userArgs.slice(0).join(" ") || x.user.username === userArgs[0]) || message.member;
