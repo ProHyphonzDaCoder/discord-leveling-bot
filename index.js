@@ -143,6 +143,13 @@ client.on('interactionCreate', async interaction => {
 client.on("messageCreate", message => {
   if (message.author.bot) return;
   if (!message.guild) return;
+
+  if(message.member.roles.has("875941431259332689") || message.member.roles.has("875823155917234267")) {
+    var xpMulti = 2;
+  } else {
+    var xpMulti = 1;
+  }
+
   let blacklist = sql.prepare(`SELECT id FROM blacklistTable WHERE id = ?`);
   if (blacklist.get(`${message.guild.id}-${message.author.id}`) || blacklist.get(`${message.guild.id}-${message.channel.id}`)) return;
 
@@ -172,7 +179,7 @@ client.on("messageCreate", message => {
 
   // xp system
   const generatedXp = Math.floor(Math.random() * getXpfromDB);
-  const nextXP = level.level * 2 * 250 + 250
+  const nextXP = level.level * 2 * 250 + 250 * xpMulti;
   // message content or characters length has to be more than 4 characters also cooldown
   if (talkedRecently.get(message.author.id) || message.content.length < 3 || message.content.startsWith(config.prefix)) {
     return;
