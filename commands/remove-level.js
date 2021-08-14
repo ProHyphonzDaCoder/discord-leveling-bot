@@ -1,54 +1,68 @@
 const Discord = require("discord.js");
 const SQlite = require("better-sqlite3");
 const sql = new SQlite('./mainDB.sqlite');
-const client = new Discord.Client({ intents: [Discord.Intents.FLAGS.GUILDS, Discord.Intents.FLAGS.GUILD_MESSAGES] });
-
 module.exports = {
     name: 'remove-level',
     aliases: ['removelevel'],
     category: "Leveling",
     description: "Remove or decrease level to specified user",
     cooldown: 3,
-    async execute (message, args) {
-        let userArray = message.content.split(" ");
-        let userArgs = userArray.slice(1);
-        let user = message.mentions.members.first() || message.guild.members.cache.get(userArgs[0]) || message.guild.members.cache.find(x => x.user.username.toLowerCase() === userArgs.slice(0).join(" ") || x.user.username === userArgs[0])
+    "options": [
+        {
+            "name": "level",
+            "description": "The level to take from the user",
+            // Type of input from user: https://discord.com/developers/docs/interactions/slash-commands#applicationcommandoptiontype
+            "type": 4,
+            "required": true,
+        },
+        {
+            "name": "user",
+            "description": "The user of whom to remove level (defaults to you)",
+            "type": 6,
+            "required": false
+        }
+    ],    
+    async execute (interaction) {
+        await interaction.deferReply();
 
-        if(!message.member.hasPermission("MANAGE_GUILD")) return message.reply(`You do not have permission to use this command!`);
+        let user = interaction.options.getUser("user", false) || interaction.user;
 
-        const levelArgs = parseInt(args[1])
+        if(!interaction.member.permissions.has("MANAGE_GUILD")) return interaction.reply(`You do not have permission to use this command!`);
 
-        client.getScore = sql.prepare("SELECT * FROM levels WHERE user = ? AND guild = ?");
-        client.setScore = sql.prepare("INSERT OR REPLACE INTO levels (id, user, guild, xp, level, totalXP) VALUES (@id, @user, @guild, @xp, @level, @totalXP);");
+        const levelArgs = interaction.options.getInteger("level");
+
+        interaction.client.getScore = sql.prepare("SELECT * FROM levels WHERE user = ? AND guild = ?");
+        interaction.client.setScore = sql.prepare("INSERT OR REPLACE INTO levels (id, user, guild, xp, level, totalXP) VALUES (@id, @user, @guild, @xp, @level, @totalXP);");
         if(!user) {
-            return message.reply(`Please mention an user!`)
+            return interaction.reply(`Please mention an user!`)
         } else {
             if(isNaN(levelArgs) || levelArgs < 1) {
-                return message.reply(`Please provide a valid number!`)
+                return interaction.editReply(`Please provide a valid number!`)
             } else {
-                let score = client.getScore.get(user.id, message.guild.id);
+                let score = interaction.client.getScore.get(user.id, interaction.guild.id);
                 if(!score) {
                     score = {
-                        id: `${message.guild.id}-${user.id}`,
-                        user: user.id,
-                        guild: message.guild.id,
+                        id: `${interaction.message.guild.id}-${interaction.user.id}`,
+                        user: interaction.user.id,
+                        guild: interaction.guild.id,
                         xp: 0,
                         level: 0,
                         totalXP: 0
                     }
                 }
                 if(score.level - levelArgs < 1) {
-                    return message.reply(`You cannot remove levels from this user!`)
+                    return interaction.reply(`You cannot remove levels from this user!`)
                 }    
- 		score.level -= levelArgs
-                const newTotalXP = levelArgs - 1
+ 		        score.level -= levelArgs
+                const newTotalXP = levelArgs - 1;
                 let embed = new Discord.MessageEmbed()
-                .setTitle(`Success!`)
-                .setDescription(`Successfully remove ${levelArgs} level from ${user.toString()}!`)
-                .setColor("#5AC0DE");
+                    .setTitle(`Success!`)
+                    .setDescription(`Successfully removed level ${levelArgs} from ${user.toString()}!`)
+                    .setColor("#5AC0DE");
+                
                 score.totalXP -= newTotalXP * 2 * 250 + 250
-                client.setScore.run(score)
-                return message.channel.send(embed)
+                interaction.client.setScore.run(score);
+                return interaction.editReply({embeds: [embed]});
             }
         }
     }

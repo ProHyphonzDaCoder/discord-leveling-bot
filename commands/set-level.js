@@ -1,37 +1,53 @@
 const Discord = require("discord.js");
 const SQlite = require("better-sqlite3");
 const sql = new SQlite('./mainDB.sqlite');
-const client = new Discord.Client({ intents: [Discord.Intents.FLAGS.GUILDS, Discord.Intents.FLAGS.GUILD_MESSAGES] });
-
+const client = new Discord.Client({
+    intents: [Discord.Intents.FLAGS.GUILDS, Discord.Intents.FLAGS.GUILD_MESSAGES, Discord.Intents.FLAGS.GUILD_PRESENCES],
+});
 module.exports = {
     name: 'set-level',
     aliases: ['levelset'],
     category: "Leveling",
     description: "Set user Level and XP",
     cooldown: 3,
-    async execute (message, args) {
-        let userArray = message.content.split(" ");
-        let userArgs = userArray.slice(1);
-        let user = message.mentions.members.first() || message.guild.members.cache.get(userArgs[0]) || message.guild.members.cache.find(x => x.user.username.toLowerCase() === userArgs.slice(0).join(" ") || x.user.username === userArgs[0])
+    "options": [
+        {
+            "name": "level",
+            "description": "The level to set",
+            // Type of input from user: https://discord.com/developers/docs/interactions/slash-commands#applicationcommandoptiontype
+            "type": 4,
+            "required": true,
+        },
+        {
+            "name": "user",
+            "description": "The user of whom to set level (defaults to you)",
+            "type": 6,
+            "required": false
+        }
+    ],    
+    async execute (interaction) {
+        if(!interaction.member.permissions.has("MANAGE_GUILD")) return interaction.reply(`You do not have permission to use this command!`);
 
-        if(!message.member.hasPermission("MANAGE_GUILD")) return message.reply(`You do not have permission to use this command!`);
+        await interaction.deferReply();
 
-        const levelArgs = parseInt(args[1])
+        let user = interaction.options.getUser("user", false) || interaction.user;
+
+        const levelArgs = interaction.options.getInteger("level");
 
         client.getScore = sql.prepare("SELECT * FROM levels WHERE user = ? AND guild = ?");
         client.setScore = sql.prepare("INSERT OR REPLACE INTO levels (id, user, guild, xp, level, totalXP) VALUES (@id, @user, @guild, @xp, @level, @totalXP);");
         if(!user) {
-            return message.reply(`Please mention an user!`)
+            return interaction.reply(`Please mention an user!`)
         } else {
             if(isNaN(levelArgs) || levelArgs < 1) {
-                return message.reply(`Please provide a valid number!`)
+                return interaction.editReply(`Please provide a valid number!`)
             } else {
-                let score = client.getScore.get(user.id, message.guild.id);
+                let score = client.getScore.get(user.id, interaction.guild.id);
                 if(!score) {
                     score = {
-                        id: `${message.guild.id}-${user.id}`,
+                        id: `${interaction.guild.id}-${user.id}`,
                         user: user.id,
-                        guild: message.guild.id,
+                        guild: interaction.guild.id,
                         xp: 0,
                         level: 0,
                         totalXP: 0
@@ -40,13 +56,14 @@ module.exports = {
                 score.level = levelArgs
                 const newTotalXP = levelArgs - 1
                 let embed = new Discord.MessageEmbed()
-                .setTitle(`Success!`)
-                .setDescription(`Successfully set ${levelArgs} level for ${user.toString()}!`)
-                .setColor("#5AC0DE");
+                    .setTitle(`Success!`)
+                    .setDescription(`Successfully set ${levelArgs} level for ${user.toString()}!`)
+                    .setColor("#5AC0DE");
+                
                 score.totalXP = newTotalXP * 2 * 250 + 250
                 score.xp = 0
-                client.setScore.run(score)
-                return message.channel.send(embed)
+                client.setScore.run(score);
+                return interaction.editReply({embeds: [embed]});
             }
         }
     }

@@ -142,7 +142,7 @@ const rest = new REST({ version: '9' }).setToken(token);
   }
 
   console.log(`Logged in as ${client.user.username}`)
-});
+
 
 client.on('interactionCreate', async interaction => {
   if (!interaction.isCommand()) return;

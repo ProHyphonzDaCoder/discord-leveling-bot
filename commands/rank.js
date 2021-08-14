@@ -1,7 +1,6 @@
 const Discord = require("discord.js");
 const SQLite = require("better-sqlite3");
 const sql = new SQLite('./mainDB.sqlite')
-const client = new Discord.Client({ intents: [Discord.Intents.FLAGS.GUILDS, Discord.Intents.FLAGS.GUILD_MESSAGES] });
 const canvacord = require("canvacord");
 
 module.exports = {
@@ -9,35 +8,48 @@ module.exports = {
     aliases: ['rank'],
     description: "Get your rank or another member's rank",
     cooldown: 3,
+    options: [
+		{
+			name: 'target',
+			description: 'The user\'s rank card to show',
+			type: 6,
+            required: false
+		},
+	],
     category: "Leveling",
     async execute(interaction) {
-        if(!interaction.isCommand()) return console.log("yes");
+        if(!interaction.isCommand()) return;
+        
+        const client = interaction.client;
 
         await interaction.deferReply();
 
-        let userArray = message.content.split(" ");
-        let userArgs = userArray.slice(1);
-        let user = message.mentions.members.first() || message.guild.members.cache.get(userArgs[0]) || message.guild.members.cache.find(x => x.user.username.toLowerCase() === userArgs.slice(0).join(" ") || x.user.username === userArgs[0]) || message.member;
+        let user = interaction.options.getUser("target") || interaction.user;
 
         client.getScore = sql.prepare("SELECT * FROM levels WHERE user = ? AND guild = ?");
         client.setScore = sql.prepare("INSERT OR REPLACE INTO levels (id, user, guild, xp, level, totalXP) VALUES (@id, @user, @guild, @xp, @level, @totalXP);");
 
-
-
         const top10 = sql.prepare("SELECT * FROM levels WHERE guild = ? ORDER BY totalXP").all(interaction.guild.id);
         let score = client.getScore.get(user.id, interaction.guild.id);
+
         if (!score) {
-            return interaction.editReply(`This user does not have any XP yet!`)
+            if(user == interaction.user) {
+                return interaction.editReply("You do not have any XP yet! Chat and be active to get more XP.")
+            } else {
+                return interaction.editReply(`${user.username} does not have any XP yet!`)
+            }
         }
-        const levelInfo = score.level
-        const nextXP = levelInfo * 2 * 250 + 250
+
+        const levelInfo = score.level;
+        const nextXP = levelInfo * 2 * 250 + 250;
         const xpInfo = score.xp;
-        const totalXP = score.totalXP
+        const totalXP = score.totalXP;
+
         let rank = top10.sort((a, b) => {
             return b.totalXP - a.totalXP
         });
+
         let ranking = rank.map(x => x.totalXP).indexOf(totalXP) + 1
-        //if (!interaction.guild.me.hasPermission("ATTACH_FILES")) return interaction.editReply(`**Missing Permission**: ATTACH_FILES or MESSAGE ATTACHMENTS`);
 
         try {
             var cardBg = sql.prepare("SELECT bg FROM background WHERE user = ? AND guild = ?").get(user.id, message.guild.id).bg;
@@ -67,7 +79,7 @@ console.log(interaction.member.presence);
         rankCard.build()
             .then(data => {
                 const attachment = new Discord.MessageAttachment(data, "RankCard.png");
-                return interaction.editReply({attachments: [attachment]});
+                return interaction.editReply({files: [attachment]});
             });
 
     }

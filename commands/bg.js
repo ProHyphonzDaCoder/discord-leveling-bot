@@ -1,8 +1,5 @@
-const Discord = require("discord.js");
 const SQLite = require("better-sqlite3");
 const sql = new SQLite('./mainDB.sqlite')
-const client = new Discord.Client({ intents: [Discord.Intents.FLAGS.GUILDS, Discord.Intents.FLAGS.GUILD_MESSAGES] });
-const canvacord = require("canvacord");
 
 module.exports = {
     name: 'background',
