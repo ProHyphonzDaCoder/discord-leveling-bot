@@ -1,5 +1,5 @@
-{
-    "token": "Input your token here",
-    "ownerID": "Input owner's ID here",
-    "prefix": "!"
+{    
+    "token": "Put your bot's token here",
+    "ownerID": "Put your bot's owner ID here",
+    "prefix": "Put your bot's prefix here"
 }
