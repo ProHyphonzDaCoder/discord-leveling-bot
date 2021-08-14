@@ -109,6 +109,12 @@ client.on("ready", () => {
     sql.prepare("CREATE TABLE blacklistTable (guild TEXT, typeId TEXT, type TEXT, id TEXT PRIMARY KEY);").run();
   }
 
+    // 2X XP table
+    const doubleXPTable = sql.prepare("SELECT count(*) FROM sqlite_master WHERE type='table' AND name = 'doubleXP';").get();
+    if (!doubleXPTable['count(*)']) {
+      sql.prepare("CREATE TABLE doubleXP (guild TEXT, role TEXT);").run();
+    }
+
   // Settings table
   const settingsTable = sql.prepare("SELECT count(*) FROM sqlite_master WHERE type='table' AND name = 'settings';").get();
   if (!settingsTable['count(*)']) {
@@ -144,11 +150,13 @@ client.on("messageCreate", message => {
   if (message.author.bot) return;
   if (!message.guild) return;
 
-  if(message.member.roles.has("875941431259332689") || message.member.roles.has("875823155917234267")) {
-    var xpMulti = 2;
-  } else {
-    var xpMulti = 1;
-  }
+      // 2X XP table
+      const doubleXPTable = sql.prepare("SELECT role FROM 'doubleXP' WHERE guild = " + message.guild.id).get()["role"];      ;
+      if (doubleXPTable['role'] && message.member.roles.has(doubleXPTable['role'])) {
+        var xpMulti = 2;
+      }  else {
+        var xpMulti = 1;
+      }
 
   let blacklist = sql.prepare(`SELECT id FROM blacklistTable WHERE id = ?`);
   if (blacklist.get(`${message.guild.id}-${message.author.id}`) || blacklist.get(`${message.guild.id}-${message.channel.id}`)) return;
