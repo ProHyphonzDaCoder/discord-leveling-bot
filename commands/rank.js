@@ -13,13 +13,7 @@ module.exports = {
     async execute(interaction) {
         if(!interaction.isCommand()) return console.log("yes");
 
-        await interaction.deferReply()
-            .then(console.log("a"))
-            .catch(console.error);
-
-        await interaction.deferReply()
-            .then(console.log("a"))
-            .catch(console.error);
+        await interaction.deferReply();
 
         let userArray = message.content.split(" ");
         let userArgs = userArray.slice(1);
