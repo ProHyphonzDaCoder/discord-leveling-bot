@@ -44,48 +44,34 @@ fs.readdir("./events/", (err, files) => {
 
 client.on("ready", () => {
 
-	const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+  const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
-	for (const file of commandFiles) {
-		const command = require(`./commands/${file}`);
-		// set a new item in the Collection
-		// with the key as the command name and the value as the exported module
-		client.commands.set(command.name, command);
-	}
-	
-  client.on('interactionCreate', async interaction => {
-    if (!interaction.isCommand()) return;
-  
-    if (!client.commands.has(interaction.commandName)) return;
-  
+  for (const file of commandFiles) {
+    const command = require(`./commands/${file}`);
+    client.commands.set(command.name, command);
+  }
+
+  const rest = new REST({
+    version: '9'
+  }).setToken(token);
+
+  (async () => {
     try {
-      await client.commands.get(interaction.commandName).execute(interaction);
+      console.log('Started refreshing application (/) commands.');
+
+      await rest.put(
+        Routes.applicationGuildCommands(client.user.id, "818600966512443443"), {
+          body: client.commands.map(({
+            execute,
+            ...data
+          }) => data)
+        },
+      );
+
+      console.log('Successfully reloaded application (/) commands.');
     } catch (error) {
       console.error(error);
-      return interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
-    }
-  });
 
-const rest = new REST({ version: '9' }).setToken(token);
-
-(async () => {
-	try {
-		console.log('Started refreshing application (/) commands.');
-
-		await rest.put(
-			Routes.applicationGuildCommands(client.user.id, "818600966512443443"),
-			{ body: client.commands.map(({ execute, ...data }) => data) },
-		);
-
-		console.log('Successfully reloaded application (/) commands.');
-	} catch (error) {
-		console.error(error);
-	}
-})();
-    // Check if the table "points" exists.
-    const levelTable = sql.prepare("SELECT count(*) FROM sqlite_master WHERE type='table' AND name = 'levels';").get();
-    if (!levelTable['count(*)']) {
-      sql.prepare("CREATE TABLE levels (id TEXT PRIMARY KEY, user TEXT, guild TEXT, xp INTEGER, level INTEGER, totalXP INTEGER);").run();
     }
   })();
   // Check if the table "points" exists.
@@ -142,7 +128,7 @@ const rest = new REST({ version: '9' }).setToken(token);
   }
 
   console.log(`Logged in as ${client.user.username}`)
-
+});
 
 client.on('interactionCreate', async interaction => {
   if (!interaction.isCommand()) return;
