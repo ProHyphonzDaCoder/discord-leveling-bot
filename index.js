@@ -22,6 +22,8 @@ const {
 const client = new Discord.Client({
   intents: [Discord.Intents.FLAGS.GUILDS, Discord.Intents.FLAGS.GUILD_MESSAGES, Discord.Intents.FLAGS.GUILD_PRESENCES],
 });
+const { readdirSync } = require("fs");
+
 client.commands = new Discord.Collection();
 const cooldowns = new Discord.Collection();
 const talkedRecently = new Map();
