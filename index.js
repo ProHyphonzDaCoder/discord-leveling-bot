@@ -1,5 +1,9 @@
 // Importing Packages
 const Discord = require("discord.js")
+
+const client = new Discord.Client({
+  intents: [Discord.Intents.FLAGS.GUILDS, Discord.Intents.FLAGS.GUILD_MESSAGES, Discord.Intents.FLAGS.GUILD_PRESENCES],
+});
 const SQLite = require("better-sqlite3")
 const sql = new SQLite('./mainDB.sqlite')
 const {
@@ -19,61 +23,49 @@ const {
   token
 } = require('./config.json');
 
-const client = new Discord.Client({
-  intents: [Discord.Intents.FLAGS.GUILDS, Discord.Intents.FLAGS.GUILD_MESSAGES, Discord.Intents.FLAGS.GUILD_PRESENCES],
-});
-
 client.commands = new Discord.Collection();
 const cooldowns = new Discord.Collection();
 const talkedRecently = new Map();
 
 // Token, Prefix, and Owner ID
-const config = require("./config.json")
+const config = require("./config.json");
 
-client.login(config.token)
-/* work in progress thing
-fs.readdir("./events/", (err, files) => {
-    if (err) return console.error(err);
-    files.forEach(f => {
-        if (!f.endsWith(".js")) return;
-        const event = require(`./events/${f}`);
-        let eventName = f.split(".")[0];
-        client.on(eventName, event.bind(null, client));
-    });
-*/
 
-client.on("ready", () => {
+    client.on("ready", () => {
+      const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
-  const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
-
-  for (const file of commandFiles) {
-    const command = require(`./commands/${file}`);
-    client.commands.set(command.name, command);
-  }
-
-  const rest = new REST({
-    version: '9'
-  }).setToken(token);
-
-  (async () => {
-    try {
-      console.log('Started refreshing application (/) commands.');
-
-      await rest.put(
-        Routes.applicationGuildCommands(client.user.id, "818600966512443443"), {
-          body: client.commands.map(({
-            execute,
-            ...data
-          }) => data)
-        },
-      );
-
-      console.log('Successfully reloaded application (/) commands.');
-    } catch (error) {
-      console.error(error);
-
-    }
-  })();
+      for (const file of commandFiles) {
+        const command = require(`./commands/${file}`);
+        client.commands.set(command.name, command);
+      }
+    
+    
+    
+    
+      
+      const rest = new REST({
+        version: '9'
+      }).setToken(token);
+    
+      (async () => {
+        try {
+          console.log('Started refreshing application (/) commands.');
+    
+          await rest.put(
+            Routes.applicationGuildCommands(client.user.id, "874809270259052585"), {
+              body: client.commands.map(({
+                execute,
+                ...data
+              }) => data)
+            },
+          );
+    
+          console.log('Successfully reloaded application (/) commands.');
+        } catch (error) {
+          console.error(error);
+        }
+        });
+    
   // Check if the table "points" exists.
   const levelTable = sql.prepare("SELECT count(*) FROM sqlite_master WHERE type='table' AND name = 'levels';").get();
   if (!levelTable['count(*)']) {
@@ -128,7 +120,7 @@ client.on("ready", () => {
   }
 
   console.log(`Logged in as ${client.user.username}`)
-});
+})();
 
 client.on('interactionCreate', async interaction => {
   if (!interaction.isCommand()) return;
@@ -260,4 +252,6 @@ client.on("messageCreate", message => {
       member.roles.add(roles.roleID);
     }
   }
-})
+});
+
+client.login(config.token);
