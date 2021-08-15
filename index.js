@@ -120,7 +120,7 @@ const config = require("./config.json");
   }
 
   console.log(`Logged in as ${client.user.username}`)
-})();
+});
 
 client.on('interactionCreate', async interaction => {
   if (!interaction.isCommand()) return;
