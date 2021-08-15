@@ -145,7 +145,7 @@ client.on("messageCreate", message => {
 
       // 2X XP table
       const doubleXPTable = sql.prepare("SELECT role FROM 'doubleXP' WHERE guild = " + message.guild.id).get();      ;
-      if (typeof doubleXPTable['role'] != "undefined" && message.member.roles.cache.has(doubleXPTable['role'])) {
+      if (typeof doubleXPTable != "undefined" && typeof doubleXPTable.role != "undefined" && message.member.roles.cache.has(doubleXPTable['role'])) {
         var xpMulti = 2;
       }  else {
         var xpMulti = 1;
