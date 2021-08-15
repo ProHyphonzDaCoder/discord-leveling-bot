@@ -52,7 +52,7 @@ const config = require("./config.json");
           console.log('Started refreshing application (/) commands.');
     
           await rest.put(
-            Routes.applicationGuildCommands(client.user.id, "874809270259052585"), {
+            Routes.applicationCommand(client.guild.id), {
               body: client.commands.map(({
                 execute,
                 ...data
@@ -145,7 +145,7 @@ client.on("messageCreate", message => {
 
       // 2X XP table
       const doubleXPTable = sql.prepare("SELECT role FROM 'doubleXP' WHERE guild = " + message.guild.id).get();      ;
-      if (doubleXPTable['role'] && message.member.roles.cache.has(doubleXPTable['role'])) {
+      if (typeof doubleXPTable['role'] != "undefined" && message.member.roles.cache.has(doubleXPTable['role'])) {
         var xpMulti = 2;
       }  else {
         var xpMulti = 1;
