@@ -38,8 +38,8 @@ module.exports = {
         let checkIf = sql.prepare("SELECT levelUpMessage FROM settings WHERE guild = ?").get(interaction.guild.id);
         if(checkIf) {
             sql.prepare(`UPDATE settings SET levelUpMessage = ? WHERE guild = ?`).run(interaction.options.getString("message"), interaction.guild.id);
-        } else {
-            sql.prepare(`INSERT OR REPLACE INTO settings (guild, levelUpMessage, customXP, customCooldown) VALUES (?,?,?,?)`).run(interaction.guild.id, args.join(' ').toString(), 16, 1000);
+        } else {args
+            sql.prepare(`INSERT OR REPLACE INTO settings (guild, levelUpMessage, customXP, customCooldown) VALUES (?,?,?,?)`).run(interaction.guild.id, interaction.options.getString("message"), 16, 1000);
         }
         
         return interaction.reply(`The level up message has been set to ${antonymsLevelUp(interaction.options.getString("message"))}!`);
