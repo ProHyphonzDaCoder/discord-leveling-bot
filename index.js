@@ -26,14 +26,19 @@ const {
 client.commands = new Discord.Collection();
 const talkedRecently = new Map();
 
-const commands = [];
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+
+client.commands = new Discord.Collection();
 
 
 for (const file of commandFiles) {
 	const command = require(`./commands/${file}`);
-	commands.push(command);
+	// set a new item in the Collection
+	// with the key as the command name and the value as the exported module
+	client.commands.set(command.name, command);
 }
+
+const commands = client.commands.map(({ execute, ...data }) => data); 
 
 const rest = new REST({ version: '9' }).setToken(token);
 

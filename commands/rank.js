@@ -19,10 +19,10 @@ module.exports = {
     category: "Leveling",
     async execute(interaction) {
         if(!interaction.isCommand()) return;
-        
-        const client = interaction.client;
 
         await interaction.deferReply();
+        
+        const client = interaction.client;
 
         let user = interaction.options.getUser("target") || interaction.user;
 
