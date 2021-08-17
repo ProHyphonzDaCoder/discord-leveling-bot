@@ -24,47 +24,40 @@ const {
 } = require('./config.json');
 
 client.commands = new Discord.Collection();
-const cooldowns = new Discord.Collection();
 const talkedRecently = new Map();
+
+const commands = [];
+const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+
+
+for (const file of commandFiles) {
+	const command = require(`./commands/${file}`);
+	commands.push(command);
+}
+
+const rest = new REST({ version: '9' }).setToken(token);
+
+(async () => {
+	try {
+		console.log('Started refreshing application (/) commands.');
+
+		await rest.put(
+			Routes.applicationCommands("837864244728692736"),
+			{ body: commands },
+		);
+
+		console.log('Successfully reloaded application (/) commands.');
+	} catch (error) {
+		console.error(error);
+	}
+})();
 
 // Token, Prefix, and Owner ID
 const config = require("./config.json");
 
 
     client.on("ready", () => {
-      const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
-      for (const file of commandFiles) {
-        const command = require(`./commands/${file}`);
-        client.commands.set(command.name, command);
-      }
-    
-    
-    
-    
-      
-      const rest = new REST({
-        version: '9'
-      }).setToken(token);
-    
-      (async () => {
-        try {
-          console.log('Started refreshing application (/) commands.');
-    
-          await rest.put(
-            Routes.applicationCommand(client.guild.id), {
-              body: client.commands.map(({
-                execute,
-                ...data
-              }) => data)
-            },
-          );
-    
-          console.log('Successfully reloaded application (/) commands.');
-        } catch (error) {
-          console.error(error);
-        }
-        });
     
   // Check if the table "points" exists.
   const levelTable = sql.prepare("SELECT count(*) FROM sqlite_master WHERE type='table' AND name = 'levels';").get();
