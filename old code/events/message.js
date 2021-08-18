@@ -147,20 +147,19 @@ if(!cancelCommand) {
 
             let levelUpMsg;
 
-                function antonymsLevelUp(string) {
-                    return string
-                        .replace(/{member}/i, `${message.member}`)
-                        .replace(/{xp}/i, `${level.xp}`)
-                        .replace(/{level}/i, `${level.level}`)
-                }
-                message.channel.send(antonymsLevelUp(customSettings.levelUpMessage.toString()));
-            
+            let antonymsLevelUp = (string) => {
+                return string
+                    .replace(/{member}/i, `${message.member}`)
+                    .replace(/{xp}/i, `${level.xp}`)
+                    .replace(/{level}/i, `${level.level}`)
+            }
+            message.channel.send(antonymsLevelUp(customSettings.levelUpMessage.toString()));
 
             }
         };
         client.setLevel.run(`${message.author.id}-${message.guild.id}`, message.author.id, message.guild.id, level.xp, level.level, level.totalXP);
         // add cooldown to user
-        setTimeout(function() {
+        setTimeout(() => {
             recentMessages = [];
         }, 5000);
     }
