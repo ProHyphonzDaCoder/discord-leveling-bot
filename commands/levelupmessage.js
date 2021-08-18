@@ -28,7 +28,7 @@ module.exports = {
             return;
         }
 
-        function antonymsLevelUp(string) {
+        let antonymsLevelUp = (string) => {
             return string
               .replace(/{member}/i, `${interaction.member}`)
               .replace(/{xp}/i, `${level.xp}`)

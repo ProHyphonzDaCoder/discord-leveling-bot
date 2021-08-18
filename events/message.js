@@ -36,6 +36,7 @@ module.exports = async (client, message) => {
         insertLevel.run(`${message.author.id}-${message.guild.id}`, message.author.id, message.guild.id, 0, 0, 0)
         return;
     }
+
     let blacklist = sql.prepare(`SELECT id FROM blacklistTable WHERE id = ?`);
     if (blacklist.get(`${message.guild.id}-${message.author.id}`) || blacklist.get(`${message.guild.id}-${message.channel.id}`)) return;
 
@@ -75,23 +76,22 @@ module.exports = async (client, message) => {
 
             let levelUpMsg;
 
-                function antonymsLevelUp(string) {
-                    return string
-                        .replace(/{member}/i, `${message.member}`)
-                        .replace(/{xp}/i, `${level.xp}`)
-                        .replace(/{level}/i, `${level.level}`)
-                }
-                message.channel.send(antonymsLevelUp(customSettings.levelUpMessage.toString()));
-            
+            let antonymsLevelUp = (string) => {
+                return string
+                    .replace(/{member}/i, `${message.member}`)
+                    .replace(/{xp}/i, `${level.xp}`)
+                    .replace(/{level}/i, `${level.level}`)
+            }
+            message.channel.send(antonymsLevelUp(customSettings.levelUpMessage.toString()));
 
             }
         };
         client.setLevel.run(`${message.author.id}-${message.guild.id}`, message.author.id, message.guild.id, level.xp, level.level, level.totalXP);
         // add cooldown to user
-        setTimeout(function() {
+        setTimeout(() => {
             recentMessages = [];
         }, 5000);
-    }
+
     // level up, time to add level roles
     const member = message.member;
     let Roles = sql.prepare("SELECT * FROM roles WHERE guildID = ? AND level = ?")
