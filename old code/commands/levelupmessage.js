@@ -28,11 +28,11 @@ module.exports = {
         .setColor("RANDOM")
         .setThumbnail(message.author.displayAvatarURL({ dynamic: true }))
         .setTimestamp();
-        function antonymsLevelUp(string) {
+        let antonymsLevelUp = (string) => {
             return string
-              .replace(/{member}/i, `${message.member}`)
-              .replace(/{xp}/i, `${level.xp}`)
-              .replace(/{level}/i, `${level.level}`)
+                .replace(/{member}/i, `${message.member}`)
+                .replace(/{xp}/i, `${level.xp}`)
+                .replace(/{level}/i, `${level.level}`)
         }
         embed.setDescription(antonymsLevelUp(args.join(' ').toString()));
         let checkIf = sql.prepare("SELECT levelUpMessage FROM settings WHERE guild = ?").get(message.guild.id);
