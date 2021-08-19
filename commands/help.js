@@ -33,7 +33,6 @@ module.exports = {
             let help = new MessageEmbed()
                 .setColor("#5AC0DE")
                 .setAuthor(`${interaction.guild.name} Help Menu`)
-                .setDescription("Want to invite this bot to your server? \nJoin our [support server](https://discord.gg/6SbwSCzehm)!")
                 .addFields(
                     { name: `Leveling Commands`, value: `\`${prefix}rank\`
 \`${prefix}bg\`
@@ -45,6 +44,9 @@ module.exports = {
 \`${prefix}add-level\`
 \`${prefix}doublexprole\`` }
                 )
+                .addField("The Nexus",`
+[Support server](https://discord.gg/6SbwSCzehm)
+[Bot invite](https://discord.com/oauth2/authorize?client_id=837864244728692736&permissions=1593305202&scope=bot+applications.commands)`)            
                 .setTimestamp();
 
             return interaction.reply({embeds: [help]});
