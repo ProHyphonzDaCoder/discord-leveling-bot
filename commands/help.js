@@ -33,6 +33,7 @@ module.exports = {
             let help = new MessageEmbed()
                 .setColor("#5AC0DE")
                 .setAuthor(`${interaction.guild.name} Help Menu`)
+                .setDescription("Want to invite this bot to your server? \nJoin our [support server](https://discord.gg/6SbwSCzehm)!")
                 .addFields(
                     { name: `Leveling Commands`, value: `\`${prefix}rank\`
 \`${prefix}bg\`
