@@ -39,3 +39,6 @@ If you don't have money to host, well [DanBot Hosting](https://discord.gg/dbh) i
 
 #### Repl.It
 I've heard good things about [Repl.It][https://repl.it], but I haven't tried it yet. It's another free hosting service.
+
+#### Support
+If you have any issues hosting this bot join the [support server!](https://discord.gg/6SbwSCzehm)
