@@ -17,7 +17,7 @@ module.exports = {
     category: "Leveling",
     async execute (interaction) {
 		if(!interaction.options.getString("bgurl")) {
-			sql.prepare("DELETE FROM background WHERE user = (?);").run(interaction.user.id);
+			sql.prepare("DELETE FROM background WHERE user = (?);").run(message.author.id);
 			return interaction.reply("Your rank card background has been reset!");
 		}
         var valid = /^(http|https):\/\/[^ "]+$/.test(interaction.options.getString("bgurl")) && (interaction.options.getString("bgurl").endsWith(".png") || interaction.options.getString("bgurl").endsWith(".jpg") || interaction.options.getString("bgurl").endsWith("jpeg"));
