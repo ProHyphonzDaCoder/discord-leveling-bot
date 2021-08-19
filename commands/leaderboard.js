@@ -85,9 +85,9 @@ module.exports = {
                 context.font = '26px sans-serif';
                 context.fillStyle = '#ffffff';
                 context.textBaseline = "middle";
-                console.log(context.measureText(`#${Number(i) + 1} • ${interaction.client.users.cache.find(user => user.id === myList[i].user).tag} • Level ${myList[i].level}`).width);
+                console.log(context.measureText(`#${Number(i) + 1} • ${interaction.client.users.cache.find(user => user.id === myList[i].user).tag} • LVL ${myList[i].level}`).width);
                 context.fillText(
-                    shorten(`#${Number(i) + 1} • ${interaction.client.users.cache.find(user => user.id === myList[i].user).tag} • Level ${myList[i].level}`, 30),
+                    shorten(`#${Number(i) + 1} • ${interaction.client.users.cache.find(user => user.id === myList[i].user).tag} • LVL ${myList[i].level}`, 30),
                     50,
                     (i * 55) + (50/2));
             }
