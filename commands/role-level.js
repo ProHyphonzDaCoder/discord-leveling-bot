@@ -41,7 +41,7 @@ module.exports = {
                 .addFields({ name: `${prefix}role-level show`, value: `Shows all roles set to levels.`})
                 .setColor("#5AC0DE");
 
-            return interaction.channel.send(embed);
+            return interaction.channel.send({embeds: [embed]});
         }
 
         if(!interaction.options.getRole("role")) {
@@ -109,7 +109,7 @@ module.exports = {
                  embed.addFields({ name: `\u200b`, value: `**Level ${LevelSet}**: <@&${RolesSet}>` }); 
                 }
 
-                return interaction.editReply({embed});
+                return interaction.editReply({embeds: [embed]});
             }
         }
 
