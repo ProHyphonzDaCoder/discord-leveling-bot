@@ -37,13 +37,12 @@ module.exports = {
                     { name: `Leveling Commands`, value: `\`${prefix}rank\`
 \`${prefix}bg\`
 \`${prefix}leaderboard\``},
-                    { name: `Configuration Commands (admin-only)`, value: `\`${prefix}prefix\`
-\`${prefix}levelupmessage\`
+                    { name: `Configuration Commands (admin-only)`, value: `\`${prefix}levelupmessage\`
 \`${prefix}xpsettings\`
 \`${prefix}channel-levelup\`
 \`${prefix}role-level\`
 \`${prefix}add-level\`
-\`${prefix}blacklist\`` }
+\`${prefix}doublexprole\`` }
                 )
                 .setTimestamp();
 
