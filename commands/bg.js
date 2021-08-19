@@ -16,18 +16,19 @@ module.exports = {
 	],
     category: "Leveling",
     async execute (interaction) {
+	    await interaction.deferReply();
 		if(!interaction.options.getString("bgurl")) {
 			sql.prepare("DELETE FROM background WHERE user = (?);").run(interaction.user.id);
-			return interaction.reply("Your rank card background has been reset!");
+			return await interaction.editReply("Your rank card background has been reset!");
 		}
         var valid = /^(http|https):\/\/[^ "]+$/.test(interaction.options.getString("bgurl")) && (interaction.options.getString("bgurl").endsWith(".png") || interaction.options.getString("bgurl").endsWith(".jpg") || interaction.options.getString("bgurl").endsWith("jpeg"));
 		if(!valid) return interaction.reply("Please enter a valid image URL. It must use HTTP or HTTPS and be a PNG, JPG, or JPEG image. It must not have a `?` or `&` at the end.");
 		
 		try {
 			sql.prepare("INSERT OR REPLACE INTO background (user, guild, bg) VALUES (?, ?, ?);").run(interaction.member.id, interaction.guild.id, interaction.options.getString("bgurl"));
-			interaction.reply("Background set!");
+			await interaction.editReply("Background set!");
 		} catch (e) {
-			interaction.reply("An error occurred while setting the background.");
+			await interaction.editReply("An error occurred while setting the background.");
 			console.error(e);
 		}
     }
