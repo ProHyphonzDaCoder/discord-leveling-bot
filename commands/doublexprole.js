@@ -19,7 +19,9 @@ module.exports = {
 
         let role = interaction.options.getRole("role");
 
-        sql.prepare("INSERT OR REPLACE INTO doubleXP (guild, role) VALUES (?, ?);").run(interaction.guild.id, role.id);
-        return interaction.reply(`Double XP role has been set to ${role.name}`);
+
+            sql.prepare("INSERT OR REPLACE INTO doubleXP (guild, role) VALUES (?, ?);").run(interaction.guild.id, role.id);
+            return interaction.reply(`Double XP role has been set to ${role.name}`);
+        
     }
 }
