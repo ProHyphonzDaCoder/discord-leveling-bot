@@ -8,20 +8,18 @@ module.exports = {
     aliases: ['rank'],
     description: "Get your rank or another member's rank",
     cooldown: 3,
-    options: [
-		{
-			name: 'target',
-			description: 'The user\'s rank card to show',
-			type: 6,
-            required: false
-		},
-	],
+    options: [{
+        name: 'target',
+        description: 'The user\'s rank card to show',
+        type: 6,
+        required: false
+    }, ],
     category: "Leveling",
     async execute(interaction) {
-        if(!interaction.isCommand()) return;
+        if (!interaction.isCommand()) return;
 
         await interaction.deferReply();
-        
+
         const client = interaction.client;
 
         let user = interaction.options.getUser("target") || interaction.user;
@@ -33,7 +31,7 @@ module.exports = {
         let score = client.getScore.get(user.id, interaction.guild.id);
 
         if (!score) {
-            if(user == interaction.user) {
+            if (user == interaction.user) {
                 return interaction.editReply("You do not have any XP yet! Chat and be active to get more XP.")
             } else {
                 return interaction.editReply(`${user.username} does not have any XP yet!`)
@@ -59,12 +57,12 @@ module.exports = {
             var bgType = "COLOR";
         }
 
-console.log(interaction.member.presence);
+        console.log(interaction.member.presence);
         const rankCard = new canvacord.Rank()
             .setAvatar(user.displayAvatarURL({
                 format: "jpg"
             }))
-            .setStatus(interaction.member.presence.status, true, 1)
+            .setStatus(interaction.guild.members.cache.find(member => member.id == interaction.options.getUser("user").id).presence.status, true, 1)
             .setCurrentXP(xpInfo)
             .setRequiredXP(nextXP)
             .setProgressBar("#5AC0DE", "COLOR")
@@ -79,7 +77,9 @@ console.log(interaction.member.presence);
         rankCard.build()
             .then(data => {
                 const attachment = new Discord.MessageAttachment(data, "RankCard.png");
-                return interaction.editReply({files: [attachment]});
+                return interaction.editReply({
+                    files: [attachment]
+                });
             });
 
     }
