@@ -70,7 +70,12 @@ module.exports = {
 
                 context.drawImage(background, 0, i * 55, canvas.width, 50);
 
-                const avatar = await Canvas.loadImage(interaction.client.users.cache.find(user => user.id === myList[i].user).displayAvatarURL({
+                let specifiedUser = interaction.client.users.cache.find(user => user.id === myList[i].user);
+                if (!specifiedUser) {
+                    interaction.client.users.fetch(myList[i].user)
+                        .then(cachedUser => specifiedUser = interaction.client.users.cache.find(user => user.id === myList[i].user))
+                }
+                const avatar = await Canvas.loadImage(specifiedUser.displayAvatarURL({
                     format: 'png'
                 }));
 
