@@ -40,3 +40,6 @@ If you don't have money to host, well [DanBot Hosting](https://discord.gg/dbh) i
 
 #### Support
 If you have any issues hosting this bot join the [support server!](https://discord.gg/6SbwSCzehm)
+
+#### WARNING
+If you decide to host this on heroku please don't heroku has trouble with SQLite Files
