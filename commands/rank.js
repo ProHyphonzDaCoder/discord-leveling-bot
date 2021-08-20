@@ -50,7 +50,7 @@ module.exports = {
         let ranking = rank.map(x => x.totalXP).indexOf(totalXP) + 1
 
         try {
-            var cardBg = sql.prepare("SELECT bg FROM background WHERE user = ? AND guild = ?").get(user.id, message.guild.id).bg;
+            var cardBg = sql.prepare("SELECT bg FROM background WHERE user = ? AND guild = ?").get(user.id, interaction.guild.id).bg;
             var bgType = "IMAGE";
         } catch (e) {
             var cardBg = "#000000";
