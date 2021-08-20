@@ -31,22 +31,24 @@ module.exports = {
         if (!interaction.options.getString("command")) {
 
             let help = new MessageEmbed()
-                .setColor("#5AC0DE")
-                .setAuthor(`${interaction.guild.name} Help Menu`)
+                .setColor("#2E294E")
+                .setAuthor(`Hyphonz`)
+                .setTitle("Command List")
+                .setThumbnail("https://media.discordapp.net/attachments/876895206463635509/878355593881083914/Hyphonz_1.png")
                 .addFields(
-                    { name: `Leveling Commands`, value: `\`${prefix}rank\`
-\`${prefix}bg\`
-\`${prefix}leaderboard\``},
-                    { name: `Configuration Commands (admin-only)`, value: `\`${prefix}levelupmessage\`
-\`${prefix}xpsettings\`
-\`${prefix}channel-levelup\`
-\`${prefix}role-level\`
-\`${prefix}add-level\`
-\`${prefix}doublexprole\`` }
+                    { name: `Leveling Commands`, value: `<:reply:878354292845735937>\`${prefix}rank\`
+<:reply:878354292845735937>\`${prefix}background\`
+<:reply:878354292845735937>\`${prefix}leaderboard\``, inline: true},
+                    { name: `Configuration Commands (admin-only)`, value: `<:reply:878354292845735937>\`${prefix}levelupmessage\`
+<:reply:878354292845735937>\`${prefix}xpsettings\`
+<:reply:878354292845735937>\`${prefix}channel-levelup\`
+<:reply:878354292845735937>\`${prefix}role-level\`
+<:reply:878354292845735937>\`${prefix}add-level\`
+<:reply:878354292845735937>\`${prefix}doublexprole\``, inline: true}
                 )
                 .addField("The Nexus",`
 [Support server](https://discord.gg/6SbwSCzehm)
-[Bot invite](https://discord.com/oauth2/authorize?client_id=837864244728692736&permissions=1593305202&scope=bot+applications.commands)`)            
+[Bot invite](https://discord.com/oauth2/authorize?client_id=837864244728692736&permissions=1593305202&scope=bot+applications.commands)`, true)            
                 .setTimestamp();
 
             return interaction.reply({embeds: [help]});
