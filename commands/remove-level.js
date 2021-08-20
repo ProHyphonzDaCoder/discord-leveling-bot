@@ -51,7 +51,7 @@ module.exports = {
                     }
                 }
                 if(score.level - levelArgs < 1) {
-                    return interaction.reply(`You cannot remove levels from this user!`)
+                    return interaction.editReply(`You cannot remove levels from this user!`)
                 }    
  		        score.level -= levelArgs
                 const newTotalXP = levelArgs - 1;
