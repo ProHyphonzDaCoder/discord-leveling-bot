@@ -55,7 +55,7 @@ module.exports = {
         let buildTable = async () => {
             var pagesData = pagination(state.querySet, state.page, state.rows);
             var myList = pagesData.querySet;
-            const canvas = Canvas.createCanvas(559, 570);
+            const canvas = Canvas.createCanvas(559, myList.length * 55);
             const context = canvas.getContext('2d');
             for (var i = 1 in myList) {
                 let nextXP = myList[i].level * 2 * 250 + 250
