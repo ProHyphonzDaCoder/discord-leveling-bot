@@ -153,7 +153,7 @@ module.exports = {
             .setTitle(`${interaction.guild.name} Leaderboard`)
             .setDescription("Use `/rank` if a user's rank is cut off.")
             .setImage('attachment://lb.png')
-            .setImage("https://images-ext-1.discordapp.net/external/1a271M1p5EN0yAXBPEtrsgDIhWxdkZj_R1J5fMlDx84/https/media.discordapp.net/attachments/876895206463635509/878355593881083914/Hyphonz_1.png")
+            .setThumbnail("https://images-ext-1.discordapp.net/external/1a271M1p5EN0yAXBPEtrsgDIhWxdkZj_R1J5fMlDx84/https/media.discordapp.net/attachments/876895206463635509/878355593881083914/Hyphonz_1.png")
             .setColor("#F46036");
 
         let end = new Date().getTime();
