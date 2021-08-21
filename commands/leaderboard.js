@@ -5,6 +5,18 @@ const Canvas = require('canvas');
 const { fillTextWithTwemoji } = require('node-canvas-with-twemoji-and-discord-emoji');
 const { joinImages } = require('join-images');
 
+let background; // variable for backgrond image
+let saveBg = (image) => { background = image } // assigns background image to variable
+Canvas.loadImage(__dirname + '/../images/lb-background.png').then(image => saveBg(image)); // saves background image
+
+const testCanvas = Canvas.createCanvas(1, 1); // Canvas for testing length of strings
+const testContext = testCanvas.getContext('2d'); // Context of canvas for testing length of strings
+testContext.font = '26px sans-serif';
+testContext.fillStyle = '#ffffff';
+
+const rankWidth = testContext.measureText("#10").width; // Maximum width of rank segment
+const lvlWidth = testContext.measureText("LVL 9999").width; // X of the LVL assuming that tag is empty
+
 module.exports = {
     name: 'leaderboard',
     aliases: ['lb'],
@@ -12,6 +24,7 @@ module.exports = {
     cooldown: 3,
     category: "Leveling",
     async execute(interaction) {
+        let start = new Date().getTime();
         await interaction.deferReply();
 
         //const currentPage = /*parseInt(args[0]) ||*/ 1;
@@ -46,17 +59,27 @@ module.exports = {
             }
         }
 
-        let shorten = (text, len) => {
-            if (typeof text !== "string") return "";
-            if (text.length <= len) return text;
-            return text.substr(0, len).trim() + "...";
-        }
-
         let buildTable = async () => {
             var pagesData = pagination(state.querySet, state.page, state.rows);
             var myList = pagesData.querySet;
-            const canvas = Canvas.createCanvas(559, myList.length * 55);
+
+            let longestEntry = myList.reduce((accumulator, currentValue) => {
+                let user = interaction.client.users.cache.find(user => user.id === currentValue.user);
+                if (!user) {
+                    interaction.client.users.fetch(currentValue.user)
+                        .then(cachedUser => user = cachedUser);
+                }
+                let tagWidth = testContext.measureText(user.tag).width;
+                return accumulator > tagWidth ? accumulator : tagWidth;
+            }, 0);
+
+            const canvas = Canvas.createCanvas(60 + rankWidth + 20 + longestEntry + 20 + lvlWidth + 20, myList.length * 55);
             const context = canvas.getContext('2d');
+
+            context.font = '26px sans-serif';
+            context.fillStyle = '#ffffff';
+            context.textBaseline = "middle";
+
             for (var i = 1 in myList) {
                 let nextXP = myList[i].level * 2 * 250 + 250
                 let totalXP = myList[i].totalXP
@@ -66,14 +89,12 @@ module.exports = {
                 let ranking = rank.map(x => x.totalXP).indexOf(totalXP) + 1
                 let users;
 
-                const background = await Canvas.loadImage('https://cdn.discordapp.com/attachments/823984739526377532/874328086051717120/unknown.png');
-
                 context.drawImage(background, 0, i * 55, canvas.width, 50);
 
                 let specifiedUser = interaction.client.users.cache.find(user => user.id === myList[i].user);
                 if (!specifiedUser) {
                     interaction.client.users.fetch(myList[i].user)
-                        .then(cachedUser => specifiedUser = interaction.client.users.cache.find(user => user.id === myList[i].user))
+                        .then(cachedUser => specifiedUser = cachedUser)
                 }
                 const avatar = await Canvas.loadImage(specifiedUser.displayAvatarURL({
                     format: 'png'
@@ -87,10 +108,6 @@ module.exports = {
 
                 context.restore();
 
-                context.font = '26px sans-serif';
-                context.fillStyle = '#ffffff';
-                context.textBaseline = "middle";
-
                 if(Number(i) + 1 == 1) {
                     var rankText = "🥇";
                 } else if(Number(i) + 1 == 2) {
@@ -102,8 +119,16 @@ module.exports = {
                 }
                 await fillTextWithTwemoji(
                     context,
-                    shorten(`${rankText} • ${interaction.client.users.cache.find(user => user.id === myList[i].user).tag} • LVL ${myList[i].level}`, 30),
-                    50,
+                    `${rankText}`,
+                    60,
+                    (i * 55) + (50/2));
+                context.fillText(
+                    `${specifiedUser.tag}`,
+                    60 + rankWidth + 20,
+                    (i * 55) + (50/2));
+                context.fillText(
+                    `LVL ${myList[i].level}`,
+                    60 + rankWidth + 20 + longestEntry + 20,
                     (i * 55) + (50/2));
             }
             return canvas.toBuffer('image/png');
@@ -131,9 +156,10 @@ module.exports = {
             .setTitle(`${interaction.guild.name} Leaderboard`)
             .setDescription("Use `/rank` if a user's rank is cut off.")
             .setImage('attachment://lb.png')
-            .setFooter("Icon credit: Twemoji by Twitter, which is licensed under Creative Commons licensing.")
             .setColor("#2E294E");
 
+        let end = new Date().getTime();
+        console.log("Time taken to create Leaderboard in ms:", end - start);
         return interaction.editReply(
             { 
                 embeds: [embed],
