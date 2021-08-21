@@ -128,6 +128,9 @@ client.on('interactionCreate', async interaction => {
 client.on("messageCreate", message => {
     if (message.author.bot) return;
     if (!message.guild) return;
+    if (message.content) {
+        if (message.content.length < 5) return; // Ignores messages less than 5 characters
+    }
 
     // 2X XP table
     const doubleXPTable = sql.prepare("SELECT role FROM 'doubleXP' WHERE guild = " + message.guild.id).get();      ;
