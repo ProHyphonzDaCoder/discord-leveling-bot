@@ -9,7 +9,7 @@ September 11th, 2021 - V1.0.0 (Improved anti-spam, refactored code)
 ## Credits
 I based this off of another repository, but heavily modified it: https://github.com/roefinoavrililo/Discord.JS-Leveling-Bot
 
-I made this repository for a client, who goes by [ProHyphonzDaCoder](https://github.com/ProHyphonzDaCoder) on GitHub.
+
 
 ## How to setup this leveling bot
 
