@@ -19,10 +19,7 @@ const lvlWidth = testContext.measureText("LVL 9999").width; // X of the LVL assu
 
 module.exports = {
     name: 'leaderboard',
-    aliases: ['lb'],
     description: "Check the top 10 users with the most XP",
-    cooldown: 3,
-    category: "Leveling",
     async execute(interaction) {
         let start = new Date().getTime();
         await interaction.deferReply();
@@ -77,7 +74,7 @@ module.exports = {
             const context = canvas.getContext('2d');
 
             context.font = '26px sans-serif';
-            context.fillStyle = '#ffffff';
+            context.fillStyle = '#2E294E';
             context.textBaseline = "middle";
 
             for (var i = 1 in myList) {
@@ -156,7 +153,8 @@ module.exports = {
             .setTitle(`${interaction.guild.name} Leaderboard`)
             .setDescription("Use `/rank` if a user's rank is cut off.")
             .setImage('attachment://lb.png')
-            .setColor("#2E294E");
+            .setImage("https://images-ext-1.discordapp.net/external/1a271M1p5EN0yAXBPEtrsgDIhWxdkZj_R1J5fMlDx84/https/media.discordapp.net/attachments/876895206463635509/878355593881083914/Hyphonz_1.png")
+            .setColor("#F46036");
 
         let end = new Date().getTime();
         console.log("Time taken to create Leaderboard in ms:", end - start);
