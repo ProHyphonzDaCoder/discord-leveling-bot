@@ -11,7 +11,7 @@ module.exports = {
         description: 'The image URL for the background you wish to add (leave empty to reset)',
         type: 3,
         required: false
-    }, ],
+    }],
     category: "Leveling",
     async execute(interaction) {
         await interaction.deferReply();
