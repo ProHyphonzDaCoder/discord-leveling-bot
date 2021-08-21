@@ -24,7 +24,7 @@ I've been using [Something.Host](https://something.host/en/) for 8 months, and i
 ### DanBot Hosting
 If you don't have money to host, well [DanBot Hosting](https://discord.gg/dbh) is for you! It's easy to use, but everything free has risks: DanBot hosting is slow and often goes offline.
 
-### Repl.It
-I've heard good things about [Repl.It][https://repl.it], but I haven't tried it yet.
+### A Warning
+If you are planning on hosting this bot on repl.it it is not gonna work due to repl.it's node being old so probably use DanBot Hosting
 
 
