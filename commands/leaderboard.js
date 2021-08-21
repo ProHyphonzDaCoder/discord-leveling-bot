@@ -2,6 +2,7 @@ const Discord = require("discord.js");
 const SQLite = require("better-sqlite3");
 const sql = new SQLite('./mainDB.sqlite')
 const Canvas = require('canvas');
+const { fillTextWithTwemoji } = require('node-canvas-with-twemoji-and-discord-emoji');
 const { joinImages } = require('join-images');
 
 module.exports = {
@@ -22,8 +23,7 @@ module.exports = {
 
 
         if (top10.length < 1) {
-            embed.setDescription(`There are no users in this server's leaderboard.`);
-            return interaction.editReply(embed);
+            return interaction.editReply(`There are no users in this server's leaderboard.`);
         }
 
         var state = {
@@ -90,9 +90,19 @@ module.exports = {
                 context.font = '26px sans-serif';
                 context.fillStyle = '#ffffff';
                 context.textBaseline = "middle";
-                console.log(context.measureText(`#${Number(i) + 1} • ${interaction.client.users.cache.find(user => user.id === myList[i].user).tag} • LVL ${myList[i].level}`).width);
-                context.fillText(
-                    shorten(`#${Number(i) + 1} • ${interaction.client.users.cache.find(user => user.id === myList[i].user).tag} • LVL ${myList[i].level}`, 30),
+
+                if(Number(i) + 1 == 1) {
+                    var rankText = "🥇";
+                } else if(Number(i) + 1 == 2) {
+                    var rankText = "🥈";
+                } else if(Number(i) + 1 == 3) {
+                    var rankText = "🥉";
+                } else {
+                    var rankText = `#${Number(i) + 1}`;
+                }
+                await fillTextWithTwemoji(
+                    context,
+                    shorten(`${rankText} • ${interaction.client.users.cache.find(user => user.id === myList[i].user).tag} • LVL ${myList[i].level}`, 30),
                     50,
                     (i * 55) + (50/2));
             }
@@ -121,7 +131,7 @@ module.exports = {
             .setTitle(`${interaction.guild.name} Leaderboard`)
             .setDescription("Use `/rank` if a user's rank is cut off.")
             .setImage('attachment://lb.png')
-            .setColor("#5AC0DE");
+            .setColor("#2E294E");
 
         return interaction.editReply(
             { 
