@@ -42,6 +42,6 @@ module.exports = {
             sql.prepare(`INSERT OR REPLACE INTO settings (guild, levelUpMessage, customXP, customCooldown) VALUES (?,?,?,?)`).run(interaction.guild.id, interaction.options.getString("message"), 16, 1000);
         }
         
-        return interaction.reply(`The level up message has been set to ${antonymsLevelUp(interaction.options.getString("message"))}!`);
+        return interaction.reply(`Here is a preview of the level up message ${antonymsLevelUp(interaction.options.getString("message"))}`);
     }
 }
