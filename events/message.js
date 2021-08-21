@@ -17,6 +17,9 @@ const config = require("../config.json");
 module.exports = async (client, message) => {
     if (message.author.bot) return;
     if (!message.guild) return;
+    if (message.content) {
+        if (message.content.length < 5) return; // Ignores messages less than 5 characters
+    }
 
     var recentMessages = [];
 
