@@ -131,6 +131,7 @@ module.exports = {
             .setTitle(`${interaction.guild.name} Leaderboard`)
             .setDescription("Use `/rank` if a user's rank is cut off.")
             .setImage('attachment://lb.png')
+            .setFooter("Icon credit: Twemoji by Twitter, which is licensed under Creative Commons licensing.")
             .setColor("#2E294E");
 
         return interaction.editReply(
