@@ -28,5 +28,3 @@ If you don't have money to host, well [DanBot Hosting](https://discord.gg/dbh) i
 I've heard good things about [Repl.It][https://repl.it], but I haven't tried it yet.
 
 
-### UPDATE
-Repl.it's node version is outdated so this code is not supported 
