@@ -11,10 +11,10 @@ module.exports = {
     execute: (message) => {
         if (message.author.bot) return;
         if (!message.guild) return;
-        if (message.content) {
+        if (message.content)
             if (message.content.length < 5) return; // Ignores messages less than 5 characters
-        }
-    
+            if (!message.content.includes(' ')) return; // Ignores one word messages
+
         // 2X XP table
         const doubleXPTable = sql.prepare("SELECT role FROM 'doubleXP' WHERE guild = " + message.guild.id).get();      ;
         if (typeof doubleXPTable != "undefined" && typeof doubleXPTable.role != "undefined" && message.member.roles.cache.has(doubleXPTable['role'])) {

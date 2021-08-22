@@ -11,9 +11,10 @@ module.exports = {
         type: 7,
         required: true
     }],
-    category: "Music",
+    category: "Miscellaneous",
     async execute(interaction) {
         await interaction.deferReply();
+
         if (!interaction.options.getChannel("channel")) {
             return await interaction.editReply("You need to specify a channel for this command.");
         }
