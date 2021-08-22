@@ -22,7 +22,7 @@ Before running everything, you must have [Node.JS](https://nodejs.org/en/downloa
 After installing [Node.JS](https://nodejs.org/en/download/), you need to install all of the packages listed in `package.json` file. On Console/Terminal, run the the `npm install` command to install all of uninstalled packages.
 
 ##### File Setup
-After installing packages, now you can copy your Discord Bot Token into `config.json`, then enter your User ID and your prefix
+After installing packages, now you can copy your Discord Bot Token into `config.json`, then enter your bot token, user ID, and application ID.
 
 ##### Getting the Bot online for the first time
 On your Console/Terminal, run `node index.js` or `node .` to run the bot!
