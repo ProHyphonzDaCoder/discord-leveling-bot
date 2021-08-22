@@ -11,7 +11,7 @@ module.exports = {
         type: 7,
         required: true
     }],
-    category: "Miscellaneous",
+    category: "Miscellaneos",
     async execute(interaction) {
         await interaction.deferReply();
 
