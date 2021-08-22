@@ -4,16 +4,38 @@ const sql = new SQLite('./mainDB.sqlite');
 const config = require("../config.json");
 const sqlFunctions = require("../sql_functions/sql_functions");
 
-const talkedRecently = new Map();
+const msIn5Mins = 1000 * 60 * 5; // milliseconds in 5 minutes
+
+let talkedRecently = new Map();
+let latestMessages = new Map(); // Map for remembering what people said
+
+setInterval(() => { // Forgets people's last messages after a while
+    latestMessages.forEach((value, key, map) => {
+        if (latestMessages.get(key).time > Date.now() - msIn5Mins) {
+            latestMessages.delete(key);
+        }
+    });
+}, msIn5Mins);
 
 module.exports = {
     name: "messageCreate",
     execute: (message) => {
         if (message.author.bot) return;
         if (!message.guild) return;
-        if (message.content)
-            if (message.content.length < 5) return; // Ignores messages less than 5 characters
-            if (!message.content.includes(' ')) return; // Ignores one word messages
+        if (!message.content) return;
+        
+        if (message.content.length < 5) return; // Ignores messages less than 5 characters
+        if (!message.content.includes(' ')) return; // Ignores one word messages
+
+        if (latestMessages.has(`${message.author.id}-${message.guild.id}`)) {
+            let lastMessage = latestMessages.get(`${message.author.id}-${message.guild.id}`);
+            if (lastMessage.content == message.content) return; // Ignores if last message is the same
+        }
+
+        latestMessages.set(`${message.author.id}-${message.guild.id}`, { // Remembers new message
+            content: message.content,
+            time: Date.now()
+        });
 
         // 2X XP table
         const doubleXPTable = sql.prepare("SELECT role FROM 'doubleXP' WHERE guild = " + message.guild.id).get();      ;
@@ -105,7 +127,7 @@ module.exports = {
             sqlFunctions.setLevel.run(`${message.author.id}-${message.guild.id}`, message.author.id, message.guild.id, level.xp, level.level, level.totalXP);
             // add cooldown to user
             talkedRecently.set(message.author.id, Date.now() + getCooldownfromDB);
-            setTimeout(() => talkedRecently.delete(message.author.id, Date.now() + getCooldownfromDB))
+            setTimeout(() => talkedRecently.delete(message.author.id), getCooldownfromDB)
         }
     
         // level up, time to add level roles
