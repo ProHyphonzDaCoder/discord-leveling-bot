@@ -6,8 +6,4 @@ A leveling &amp; EXP Discord bot with anti-spam features, a leveling rank card s
 ## Release plans
 September 11th, 2021 - V1.0.0 (Improved anti-spam, refactored code)
 
-## Credits
-misterdossy, Connor Ahern and ProHyphonzDaCoder (Our Leader)
 
-### Note
-We do not provide support for hosting which is why we reccommend you use our [main bot](https://bit.ly/3sNNxT5) !
