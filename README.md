@@ -10,4 +10,4 @@ September 11th, 2021 - V1.0.0 (Improved anti-spam, refactored code)
 misterdossy, Connor Ahern and ProHyphonzDaCoder (Our Leader)
 
 ### Note
-We do not provide support for hosting which is why we reccommend you use our main bot! [Hyphonz][https://discord.com/oauth2/authorize?client_id=837864244728692736&permissions=1593305202&scope=bot+applications.commands]
+We do not provide support for hosting which is why we reccommend you use our main bot! [Hyphonz] (https://discord.com/oauth2/authorize?client_id=837864244728692736&permissions=1593305202&scope=bot+applications.commands)
