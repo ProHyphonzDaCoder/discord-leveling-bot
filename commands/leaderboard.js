@@ -67,8 +67,9 @@ module.exports = {
                     interaction.client.users.fetch(currentValue.user)
                         .then(cachedUser => tagWidth = testContext.measureText(cachedUser.tag).width);
                 } else {
-                    tagWidth = testContext.measureText(user.tag).width
+                    tagWidth = testContext.measureText(user.tag).width;
                 }
+                while (!tagWidth) {} // wait for tagWidth to be defined
                 return accumulator > tagWidth ? accumulator : tagWidth;
             }, 0);
 
@@ -93,8 +94,9 @@ module.exports = {
                 let specifiedUser = interaction.client.users.cache.find(user => user.id === myList[i].user);
                 if (!specifiedUser) {
                     interaction.client.users.fetch(myList[i].user)
-                        .then(cachedUser => specifiedUser = cachedUser)
+                        .then(cachedUser => specifiedUser = cachedUser);
                 }
+                while (!specifiedUser) {} // wait for specifiedUser to be defined
                 const avatar = await Canvas.loadImage(specifiedUser.displayAvatarURL({
                     format: 'png'
                 }));
