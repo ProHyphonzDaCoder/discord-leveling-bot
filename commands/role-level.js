@@ -1,6 +1,5 @@
 const Discord = require("discord.js");
-const config = require('../config.json') 
-const prefix = config.prefix;
+const config = require('../config.json');
 const SQlite = require("better-sqlite3");
 const sql = new SQlite('./mainDB.sqlite');
 
@@ -36,9 +35,9 @@ module.exports = {
             let embed = new Discord.MessageEmbed()
                 .setTitle(`Leveling Roles Setup`)
                 .setDescription(`Rewards role when user leveled up to a certain level`)
-                .addFields({ name: `${prefix}role-level add <level> <@role>`, value: `Sets a role to be given to user when they leveled up to certain level.`})
-                .addFields({ name: `${prefix}role-level remove <level>`, value: `Removes the role set at the specified level.`})
-                .addFields({ name: `${prefix}role-level show`, value: `Shows all roles set to levels.`})
+                .addFields({ name: `role-level add <level> <@role>`, value: `Sets a role to be given to user when they leveled up to certain level.`})
+                .addFields({ name: `role-level remove <level>`, value: `Removes the role set at the specified level.`})
+                .addFields({ name: `role-level show`, value: `Shows all roles set to levels.`})
                 .setColor("#5AC0DE");
 
             return interaction.channel.send({embeds: [embed]});
@@ -100,7 +99,7 @@ module.exports = {
             } else {
                 let embed = new Discord.MessageEmbed()
                     .setTitle(`${interaction.guild.name} Roles Level`)
-                    .setDescription(`\`${prefix}help role-level\` for more information`)
+                    .setDescription(`\`help role-level\` for more information`)
                     .setColor("#5AC0DE");
 
                 for(const data of allRoles) {

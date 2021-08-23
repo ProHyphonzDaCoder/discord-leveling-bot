@@ -10,7 +10,7 @@ Before running everything, you must have [node.js](https://nodejs.org/en/downloa
 After installing [node.js](https://nodejs.org/en/download/), you need to install all of the packages listed in `package.json` file. On Console/Terminal, run the the `npm install` command to install all of uninstalled packages. Wait for it to finish and you good to go!
 
 #### File Setup
-After installing packages, now you can copy your Discord Bot Token into `config.json`, then enter your User ID and your prefix
+After installing packages, now you can copy your Discord Bot Token into `config.json`, then enter your bot token, user ID, and application ID.
 
 #### Getting the Bot online for the First Time
 On your Console/Terminal, run `node index.js` or `node .` to run the bot! But you can't make it online forever unless you leave your PC/Code Editor/Console online for 24/7. You can host your Bot with Virtual Server/VPS/Discord Bot Hosting Services, here are some recommendation;

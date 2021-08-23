@@ -25,7 +25,6 @@ module.exports = {
         "required": false,
     }],
     async execute(interaction) {
-        const prefix = config.prefix
         if (!interaction.guild.me.permissions.has("EMBED_LINKS")) return interaction.channel.send("Missing Permission: `EMBED_LINKS`")
 
         const {
@@ -41,18 +40,18 @@ module.exports = {
                 .setThumbnail("https://media.discordapp.net/attachments/876895206463635509/878355593881083914/Hyphonz_1.png")
                 .addFields({
                     name: `Leveling Commands`,
-                    value: `<:reply:878354292845735937>\`${prefix}rank\`
-<:reply:878354292845735937>\`${prefix}background\`
-<:reply:878354292845735937>\`${prefix}leaderboard\``,
+                    value: `<:reply:878354292845735937>\`rank\`
+<:reply:878354292845735937>\`background\`
+<:reply:878354292845735937>\`leaderboard\``,
                     inline: true
                 }, {
                     name: `Configuration Commands (admin-only)`,
-                    value: `<:reply:878354292845735937>\`${prefix}levelupmessage\`
-<:reply:878354292845735937>\`${prefix}xpsettings\`
-<:reply:878354292845735937>\`${prefix}channel-levelup\`
-<:reply:878354292845735937>\`${prefix}role-level\`
-<:reply:878354292845735937>\`${prefix}add-level\`
-<:reply:878354292845735937>\`${prefix}doublexprole\``,
+                    value: `<:reply:878354292845735937>\`levelupmessage\`
+<:reply:878354292845735937>\`xpsettings\`
+<:reply:878354292845735937>\`channel-levelup\`
+<:reply:878354292845735937>\`role-level\`
+<:reply:878354292845735937>\`add-level\`
+<:reply:878354292845735937>\`doublexprole\``,
                     inline: true
                 })
                 .addField("The Nexus", `

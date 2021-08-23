@@ -76,7 +76,7 @@ module.exports = {
         const generatedXp = Math.floor(Math.random() * getXpfromDB);
         const nextXP = level.level * 2 * 250 + 250 * xpMulti;
         // message content or characters length has to be more than 4 characters also cooldown
-        if (talkedRecently.get(message.author.id) || message.content.length < 3 || message.content.startsWith(config.prefix)) {
+        if (talkedRecently.get(message.author.id) || message.content.length < 3) {
             return;
         } else { // cooldown is 10 seconds
             level.xp += generatedXp;
