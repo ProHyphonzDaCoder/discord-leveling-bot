@@ -24,7 +24,7 @@
     "discord-together": "^1.1.62",
     "discord.js": "^13.1.0",
     "fs": "0.0.1-security",
-    "join-images": "^0.2.8",
+    "join-images": "^0.2.9",
     "node-canvas-with-twemoji-and-discord-emoji": "^1.2.1"
   }
 }
