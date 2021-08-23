@@ -1,6 +1,5 @@
 {    
     "token": "Put your bot's token here",
-    "prefix": "Put your bot's prefix here",
     "ownerID": "Put your bot's owner ID here",
     "appID": "Put your bot's application ID here"
 }
