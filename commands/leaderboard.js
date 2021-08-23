@@ -61,12 +61,14 @@ module.exports = {
             var myList = pagesData.querySet;
 
             let longestEntry = myList.reduce((accumulator, currentValue) => {
+                let tagWidth;
                 let user = interaction.client.users.cache.find(user => user.id === currentValue.user);
                 if (!user) {
                     interaction.client.users.fetch(currentValue.user)
-                        .then(cachedUser => user = cachedUser);
+                        .then(cachedUser => tagWidth = testContext.measureText(cachedUser.tag).width);
+                } else {
+                    tagWidth = testContext.measureText(user.tag).width
                 }
-                let tagWidth = testContext.measureText(user.tag).width;
                 return accumulator > tagWidth ? accumulator : tagWidth;
             }, 0);
 
