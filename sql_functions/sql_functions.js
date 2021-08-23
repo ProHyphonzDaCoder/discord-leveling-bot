@@ -12,11 +12,25 @@ if (!allTables.find(table => table.name == "channel")) sql.exec("CREATE TABLE ch
 
 let getLevel = sql.prepare("SELECT * FROM levels WHERE user = ? AND guild = ?");
 let setLevel = sql.prepare("INSERT OR REPLACE INTO levels (id, user, guild, xp, level, totalXP) VALUES (?, ?, ?, ?, ?, ?);");
+let deleteLevel = sql.prepare("DELETE FROM levels WHERE user = ? AND guild = ?");
 
 let getBg = sql.prepare("SELECT bg FROM background WHERE user = ? AND guild = ?;");
 let setBg = sql.prepare("INSERT OR REPLACE INTO background (user, guild, bg) VALUES (@user, @guild, @bg);");
 
+let blacklist = sql.prepare(`SELECT id FROM blacklistTable WHERE id = ?`);
+let insertLevel = sql.prepare("INSERT OR REPLACE INTO levels (id, user, guild, xp, level, totalXP) VALUES (?,?,?,?,?,?);");
+
+let serverSettings = sql.prepare("SELECT * FROM settings WHERE guild = ?");
+let channelLevel = sql.prepare("SELECT * FROM channel WHERE guild = ?");
+
+let serverRoles = sql.prepare("SELECT * FROM roles WHERE guildID = ? AND level = ?");
+let doubleXPRole = sql.prepare("SELECT role FROM 'doubleXP' WHERE guild = ?");
+
 module.exports = {
-    getLevel, setLevel,
-    getBg, setBg
+    sql, // SQLite object
+    getLevel, setLevel, deleteLevel, // queries for levels
+    getBg, setBg, // queries for backgrounds
+    blacklist, insertLevel,
+    serverSettings, channelLevel,
+    serverRoles, doubleXPRole
 }

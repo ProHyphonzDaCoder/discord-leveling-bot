@@ -20,7 +20,7 @@ const { Routes } = require('discord-api-types/v9');
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 const eventFiles = fs.readdirSync('./events').filter(file => file.endsWith('.js'));
 
-// Token, Prefix, Owner ID, and Application ID
+// Token, Owner ID, and Application ID
 const config = require("./config.json");
 const sqlFunctions = require("./sql_functions/sql_functions");
 

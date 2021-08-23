@@ -1,24 +1,29 @@
 const Discord = require("discord.js");
-const SQLite = require("better-sqlite3");
-const sql = new SQLite('./mainDB.sqlite')
+const { sql } = require("../sql_functions/sql_functions");
+
 const Canvas = require('canvas');
 const { fillTextWithTwemoji } = require('node-canvas-with-twemoji-and-discord-emoji');
 const { joinImages } = require('join-images');
 
+// Pictures
 let background; // variable for backgrond image
 let saveBg = (image) => { background = image } // assigns background image to variable
 Canvas.loadImage(__dirname + '/../images/lb-background.png').then(image => saveBg(image)); // saves background image
 
-const testCanvas = Canvas.createCanvas(1, 1); // Canvas for testing length of strings
-const testContext = testCanvas.getContext('2d'); // Context of canvas for testing length of strings
+// Canvas for testing length of strings
+const testCanvas = Canvas.createCanvas(1, 1); 
+const testContext = testCanvas.getContext('2d');
 testContext.font = '26px sans-serif';
 testContext.fillStyle = '#ffffff';
 
+// Constants for making fail embed attachment
 const rankWidth = testContext.measureText("#10").width; // Maximum width of rank segment
 const lvlWidth = testContext.measureText("LVL 9999").width; // X of the LVL assuming that tag is empty
-
 const sorryBottomWidth = testContext.measureText("Please try running this command again.").width; // X of the LVL assuming that tag is empty
 const sorryWidth = 20 + sorryBottomWidth + 20;
+
+// SQLite query for getting top 10 most active users in guild
+let top10Sql = sql.prepare("SELECT * FROM levels WHERE guild = ? ORDER BY totalXP DESC;");
 
 module.exports = {
     name: 'leaderboard',
@@ -28,7 +33,7 @@ module.exports = {
         await interaction.deferReply();
 
         //const currentPage = /*parseInt(args[0]) ||*/ 1;
-        const top10 = sql.prepare("SELECT * FROM levels WHERE guild = ? ORDER BY totalXP DESC;").all(interaction.guild.id);
+        const top10 = top10Sql.all(interaction.guild.id);
         console.log(top10);
         /*if(parseFloat(args[0])  > Math.ceil(top10.length / 10)) {
           return message.reply(`Invalid page number! There are only ${Math.ceil(top10.length / 10)} pages`)

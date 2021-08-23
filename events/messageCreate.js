@@ -38,27 +38,25 @@ module.exports = {
         });
 
         // 2X XP table
-        const doubleXPTable = sql.prepare("SELECT role FROM 'doubleXP' WHERE guild = " + message.guild.id).get();      ;
+        const doubleXPTable = sqlFunctions.doubleXPRole.get(message.guild.id);
         if (typeof doubleXPTable != "undefined" && typeof doubleXPTable.role != "undefined" && message.member.roles.cache.has(doubleXPTable['role'])) {
             var xpMulti = 2;
         }  else {
             var xpMulti = 1;
         }
-    
-        let blacklist = sql.prepare(`SELECT id FROM blacklistTable WHERE id = ?`);
-        if (blacklist.get(`${message.guild.id}-${message.author.id}`) || blacklist.get(`${message.guild.id}-${message.channel.id}`)) return;
-    
+
+        if (sqlFunctions.blacklist.get(`${message.guild.id}-${message.author.id}`) || sqlFunctions.blacklist.get(`${message.guild.id}-${message.channel.id}`)) return;
+
         // get level and set level
         const level = sqlFunctions.getLevel.get(message.author.id, message.guild.id)
         if (!level) {
-            let insertLevel = sql.prepare("INSERT OR REPLACE INTO levels (id, user, guild, xp, level, totalXP) VALUES (?,?,?,?,?,?);");
-            insertLevel.run(`${message.author.id}-${message.guild.id}`, message.author.id, message.guild.id, 0, 0, 0)
+            sqlFunctions.insertLevel.run(`${message.author.id}-${message.guild.id}`, message.author.id, message.guild.id, 0, 0, 0)
             return;
         }
-    
-        let customSettings = sql.prepare("SELECT * FROM settings WHERE guild = ?").get(message.guild.id);
-        let channelLevel = sql.prepare("SELECT * FROM channel WHERE guild = ?").get(message.guild.id);
-    
+
+        let customSettings = sqlFunctions.serverSettings.get(message.guild.id);
+        let channelLevel = sqlFunctions.channelLevel.get(message.guild.id);
+
         const lvl = level.level;
     
         let getXpfromDB;
@@ -132,9 +130,7 @@ module.exports = {
     
         // level up, time to add level roles
         const member = message.member;
-        let Roles = sql.prepare("SELECT * FROM roles WHERE guildID = ? AND level = ?")
-    
-        let roles = Roles.get(message.guild.id, lvl)
+        let roles = sqlFunctions.serverRoles.get(message.guild.id, lvl)
         if (!roles) return;
         if (lvl >= roles.level) {
             if (roles) {
