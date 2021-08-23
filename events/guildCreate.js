@@ -5,9 +5,8 @@ let getLevels = sql.prepare("SELECT user FROM levels WHERE guild = ?");
 module.exports = {
 	name: "guildCreate",
 	execute: async (guild) => {
-		let storedUserIDs = [];
 		let storedLevels = getLevels.all(guild.id);
-		storedLevels.forEach((level) => storedUserIDs.push(level.user));
+		let storedUserIDs = storedLevels.map((level) => level.user);
 
 		let memberIDs = guild.member.cache.map((m) => m.id);
 		let unknownIDs = storedUserIDs.filter((userID) => !memberIDs.includes(userID));
