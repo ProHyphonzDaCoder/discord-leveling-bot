@@ -17,6 +17,9 @@ testContext.fillStyle = '#ffffff';
 const rankWidth = testContext.measureText("#10").width; // Maximum width of rank segment
 const lvlWidth = testContext.measureText("LVL 9999").width; // X of the LVL assuming that tag is empty
 
+const sorryBottomWidth = testContext.measureText("Please try running this command again.").width; // X of the LVL assuming that tag is empty
+const sorryWidth = 20 + sorryBottomWidth + 20;
+
 module.exports = {
     name: 'leaderboard',
     description: "Check the top 10 users with the most XP",
@@ -61,15 +64,12 @@ module.exports = {
             var myList = pagesData.querySet;
 
             let longestEntry = myList.reduce((accumulator, currentValue) => {
-                let tagWidth;
                 let user = interaction.client.users.cache.find(user => user.id === currentValue.user);
                 if (!user) {
                     interaction.client.users.fetch(currentValue.user)
-                        .then(cachedUser => tagWidth = testContext.measureText(cachedUser.tag).width);
-                } else {
-                    tagWidth = testContext.measureText(user.tag).width;
+                        .then(cachedUser => user = cachedUser);
                 }
-                while (!tagWidth) {} // wait for tagWidth to be defined
+                let tagWidth = testContext.measureText(user.tag).width;
                 return accumulator > tagWidth ? accumulator : tagWidth;
             }, 0);
 
@@ -94,9 +94,8 @@ module.exports = {
                 let specifiedUser = interaction.client.users.cache.find(user => user.id === myList[i].user);
                 if (!specifiedUser) {
                     interaction.client.users.fetch(myList[i].user)
-                        .then(cachedUser => specifiedUser = cachedUser);
+                        .then(cachedUser => specifiedUser = cachedUser)
                 }
-                while (!specifiedUser) {} // wait for specifiedUser to be defined
                 const avatar = await Canvas.loadImage(specifiedUser.displayAvatarURL({
                     format: 'png'
                 }));
@@ -135,6 +134,24 @@ module.exports = {
             return canvas.toBuffer('image/png');
         }
 
+        let failTable = async () => {
+            const canvas = Canvas.createCanvas(sorryWidth, 2 * 55);
+            const context = canvas.getContext('2d');
+
+            context.font = '26px sans-serif';
+            context.fillStyle = '#2E294E';
+            context.textBaseline = "middle";
+            context.textAlign = "center";
+
+            context.drawImage(background, 0, 0 * 55, canvas.width, 50);
+            context.drawImage(background, 0, 1 * 55, canvas.width, 50);
+
+            context.fillText("Leaderboard creation failed.", sorryWidth / 2, (0 * 55) + (55 / 2));
+            context.fillText("Please try running this command again.", sorryWidth / 2, (1 * 55) + (55 / 2));
+
+            return canvas.toBuffer('image/png');
+        }
+
         let roundedImage = (x,y,width,height,radius, context) => {
             context.beginPath();
             context.moveTo(x + radius, y);
@@ -149,14 +166,20 @@ module.exports = {
             context.closePath();
         }
 
-        const attachment = new Discord.MessageAttachment(await buildTable(), "lb.png");
-        //console.log(attachment);
-        //console.log(images);
+        let attachmentName;
+        let attachment;
+        try {
+            attachment = new Discord.MessageAttachment(await buildTable(), "lb.png");
+            attachmentName = "lb";
+        } catch {
+            attachment = attachment = new Discord.MessageAttachment(await failTable(), "fail.png");
+            attachmentName = "fail";
+        }
 
         const embed = new Discord.MessageEmbed()
             .setTitle(`${interaction.guild.name} Leaderboard`)
             .setDescription("Use `/rank` if a user's rank is cut off.")
-            .setImage('attachment://lb.png')
+            .setImage(`attachment://${attachmentName}.png`)
             .setThumbnail("https://images-ext-1.discordapp.net/external/1a271M1p5EN0yAXBPEtrsgDIhWxdkZj_R1J5fMlDx84/https/media.discordapp.net/attachments/876895206463635509/878355593881083914/Hyphonz_1.png")
             .setColor("#F46036");
 
