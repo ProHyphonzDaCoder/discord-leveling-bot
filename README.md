@@ -10,4 +10,4 @@ September 11th, 2021 - V1.0.0 (Improved anti-spam, refactored code)
 misterdossy, Connor Ahern and ProHyphonzDaCoder (Our Leader)
 
 ### Note
-We do not provide support for hosting which is why we reccommend you use our [main bot](https://bit.ly/3sNNxT5)!
+We do not provide support for hosting which is why we reccommend you use our [main bot](https://bit.ly/3sNNxT5) !
