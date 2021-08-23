@@ -8,7 +8,7 @@ module.exports = {
 		let storedLevels = getLevels.all(guild.id);
 		let storedUserIDs = storedLevels.map((level) => level.user);
 
-		let memberIDs = guild.member.cache.map((m) => m.id);
+		let memberIDs = guild.members.cache.map((m) => m.id);
 		let unknownIDs = storedUserIDs.filter((userID) => !memberIDs.includes(userID));
 		unknownIDs.forEach((userID) => deleteLevel.run(userID, guild.id));
 	},
