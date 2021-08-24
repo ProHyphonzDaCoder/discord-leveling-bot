@@ -25,8 +25,6 @@ module.exports = {
     ],    
     cooldown: 3,
     async execute (interaction) {
-        await interaction.deferReply();
-
         if(!interaction.guild.me.permissions.has("MANAGE_ROLES")) interaction.editReply(`I do not have permission to manage roles!`);
         if(!interaction.member.permissions.has("MANAGE_ROLES") || !interaction.member.permissions.has("MANAGE_GUILD")) return interaction.reply(`You do not have permission to use this command!`);
 

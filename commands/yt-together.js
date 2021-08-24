@@ -13,8 +13,6 @@ module.exports = {
     }],
     category: "Miscellaneous",
     async execute(interaction) {
-        await interaction.deferReply();
-
         if (!interaction.options.getChannel("channel")) {
             return await interaction.editReply("You need to specify a channel for this command.");
         }
