@@ -1,5 +1,5 @@
 const SQLite = require("better-sqlite3");
-const sql = new SQLite("../mainDB.sqlite");
+const sql = new SQLite("./mainDB.sqlite");
 
 module.exports = {
 	name: "background",
