@@ -65,7 +65,6 @@ client.on('interactionCreate', async interaction => {
     if (!client.commands.has(interaction.commandName)) return;
 
     try {
-        await interaction.deferReply();
         await client.commands.get(interaction.commandName).execute(interaction);
     } catch (error) {
         console.error(error);

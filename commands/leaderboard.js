@@ -30,6 +30,7 @@ module.exports = {
     description: "Check the top 10 users with the most XP",
     async execute(interaction) {
         let start = new Date().getTime();
+        await interaction.deferReply();
 
         //const currentPage = /*parseInt(args[0]) ||*/ 1;
         const top10 = top10Sql.all(interaction.guild.id);

@@ -14,6 +14,7 @@ module.exports = {
     }],
     category: "Leveling",
     async execute(interaction) {
+        await interaction.deferReply();
         if (!interaction.options.getString("bgurl")) {
             sql.prepare("DELETE FROM background WHERE user = (?);").run(interaction.user.id);
             return await interaction.editReply("Your rank card background has been reset!");

@@ -28,6 +28,8 @@ module.exports = {
     async execute (interaction) {
         if(!interaction.member.permissions.has("MANAGE_GUILD")) return interaction.reply(`You do not have permission to use this command!`);
 
+        await interaction.deferReply();
+
         let user = interaction.options.getUser("user", false) || interaction.user;
 
         const levelArgs = interaction.options.getInteger("level");
