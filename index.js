@@ -11,8 +11,6 @@ const client = new Discord.Client({
 client.commands = new Discord.Collection();
 
 const SQLite = require("better-sqlite3");
-const sql = new SQLite("./mainDB.sqlite");
-const { join } = require("path");
 const fs = require("fs");
 const { REST } = require("@discordjs/rest");
 const { Routes } = require("discord-api-types/v9");
@@ -22,7 +20,6 @@ const eventFiles = fs.readdirSync("./events").filter((file) => file.endsWith(".j
 
 // Token, Owner ID, and Application ID
 const config = require("./config.json");
-const sqlFunctions = require("./sql_functions/sql_functions");
 
 for (const file of commandFiles) {
 	const command = require(`./commands/${file}`);
