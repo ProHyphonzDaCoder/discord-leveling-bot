@@ -62,7 +62,7 @@ module.exports = {
             .setAvatar(user.displayAvatarURL({
                 format: "jpg"
             }))
-            .setStatus(interaction.guild.members.cache.find(member => member.id == user.id).presence.status ?? interaction.member.presence.status, true, 1)
+            .setStatus(interaction.member?.presence?.status ?? "offline", true, 1)
             .setCurrentXP(xpInfo)
             .setRequiredXP(nextXP)
             .setProgressBar("#5AC0DE", "COLOR")
