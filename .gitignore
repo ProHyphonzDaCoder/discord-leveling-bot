@@ -1,6 +1,5 @@
 config.json
 mainDB.sqlite
 node_modules/
-commands/rank.js
 config.json
 yarn.lock
