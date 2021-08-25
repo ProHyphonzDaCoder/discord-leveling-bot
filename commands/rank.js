@@ -1,21 +1,23 @@
-const { MessageAttachment } = require("discord.js");
+const {
+	MessageAttachment
+} = require("discord.js");
 const SQLite = require("better-sqlite3");
 const sql = new SQLite("./mainDB.sqlite");
-const { Rank } = require("canvacord");
+const {
+	Rank
+} = require("canvacord");
 
 module.exports = {
 	name: "rank",
 	aliases: ["rank"],
 	description: "Get your rank or another member's rank",
 	cooldown: 3,
-	options: [
-		{
-			name: "target",
-			description: "The user's rank card to show",
-			type: 6,
-			required: false,
-		},
-	],
+	options: [{
+		name: "target",
+		description: "The user's rank card to show",
+		type: 6,
+		required: false,
+	}, ],
 	category: "Leveling",
 	async execute(interaction) {
 		if (!interaction.isCommand()) return;
@@ -36,9 +38,9 @@ module.exports = {
 
 		if (!score)
 			return interaction.followUp(
-				user === interaction.member
-					? "You do not have any XP yet! Chat and be active to get more XP."
-					: `${user.user.username} does not have any XP yet!`
+				user === interaction.member ?
+				"You do not have any XP yet! Chat and be active to get more XP." :
+				`${user.user.username} does not have any XP yet!`
 			);
 
 		const levelInfo = score.level;

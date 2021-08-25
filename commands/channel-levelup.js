@@ -6,15 +6,13 @@ module.exports = {
 	aliases: ["setchannel", "channelevelup"],
 	category: "Leveling",
 	description: "Set specific channel to send level up message",
-	options: [
-		{
-			name: "channel",
-			description: "The channel to send level up messages in",
-			// Type of input from user: https://discord.com/developers/docs/interactions/slash-commands#applicationcommandoptiontype
-			type: 7,
-			required: true,
-		},
-	],
+	options: [{
+		name: "channel",
+		description: "The channel to send level up messages in",
+		// Type of input from user: https://discord.com/developers/docs/interactions/slash-commands#applicationcommandoptiontype
+		type: 7,
+		required: true,
+	}, ],
 	cooldown: 3,
 	execute(interaction) {
 		if (!interaction.member.permissions.has("MANAGE_GUILD"))

@@ -6,14 +6,12 @@ module.exports = {
 	aliases: ["bg"],
 	description: "Set a card background",
 	cooldown: 3,
-	options: [
-		{
-			name: "bgurl",
-			description: "The image URL for the background you wish to add (leave empty to reset)",
-			type: 3,
-			required: false,
-		},
-	],
+	options: [{
+		name: "bgurl",
+		description: "The image URL for the background you wish to add (leave empty to reset)",
+		type: 3,
+		required: false,
+	}, ],
 	category: "Leveling",
 	async execute(interaction) {
 		await interaction.deferReply();

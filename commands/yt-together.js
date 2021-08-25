@@ -1,4 +1,6 @@
-const { DiscordTogether } = require('discord-together');
+const {
+    DiscordTogether
+} = require('discord-together');
 
 module.exports = {
     name: 'together',

@@ -23,7 +23,7 @@ module.exports = {
         if (message.author.bot) return;
         if (!message.guild) return;
         if (!message.content) return;
-        
+
         if (message.content.length < 5) return; // Ignores messages less than 5 characters
         if (!message.content.includes(' ')) return; // Ignores one word messages
 
@@ -41,7 +41,7 @@ module.exports = {
         const doubleXPTable = sqlFunctions.doubleXPRole.get(message.guild.id);
         if (typeof doubleXPTable != "undefined" && typeof doubleXPTable.role != "undefined" && message.member.roles.cache.has(doubleXPTable['role'])) {
             var xpMulti = 2;
-        }  else {
+        } else {
             var xpMulti = 1;
         }
 
@@ -58,10 +58,10 @@ module.exports = {
         let channelLevel = sqlFunctions.channelLevel.get(message.guild.id);
 
         const lvl = level.level;
-    
+
         let getXpfromDB;
         let getCooldownfromDB;
-    
+
         if (!customSettings) {
             getXpfromDB = 16; // Default
             getCooldownfromDB = 1000;
@@ -69,7 +69,7 @@ module.exports = {
             getXpfromDB = customSettings.customXP;
             getCooldownfromDB = customSettings.customCooldown;
         }
-    
+
         // xp system
         const generatedXp = Math.floor(Math.random() * getXpfromDB);
         const nextXP = level.level * 2 * 250 + 250 * xpMulti;
@@ -79,14 +79,14 @@ module.exports = {
         } else { // cooldown is 10 seconds
             level.xp += generatedXp;
             level.totalXP += generatedXp;
-    
+
             // level up!
             if (level.xp >= nextXP) {
                 level.xp = 0;
                 level.level += 1;
-    
+
                 let levelUpMsg;
-    
+
                 if (!customSettings) {
                     levelUpMsg = `**Congratulations** ${message.author}! You have now leveled up to **level ${level.level}**`;
                 } else {
@@ -96,10 +96,10 @@ module.exports = {
                             .replace(/{xp}/i, `${level.xp}`)
                             .replace(/{level}/i, `${level.level}`)
                     }
-    
+
                     levelUpMsg = antonymsLevelUp(customSettings.levelUpMessage.toString());
                 }
-    
+
                 // using try catch if bot have perms to send EMBED_LINKS      
                 try {
                     if (!channelLevel || channelLevel.channel == "Default") {
@@ -121,13 +121,13 @@ module.exports = {
                     }
                 }
             };
-    
+
             sqlFunctions.setLevel.run(`${message.author.id}-${message.guild.id}`, message.author.id, message.guild.id, level.xp, level.level, level.totalXP);
             // add cooldown to user
             talkedRecently.set(message.author.id, Date.now() + getCooldownfromDB);
             setTimeout(() => talkedRecently.delete(message.author.id), getCooldownfromDB)
         }
-    
+
         // level up, time to add level roles
         const member = message.member;
         let roles = sqlFunctions.serverRoles.get(message.guild.id, lvl)

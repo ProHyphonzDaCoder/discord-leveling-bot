@@ -10,8 +10,7 @@ module.exports = {
     category: "Leveling",
     description: "Set user Level and XP",
     cooldown: 3,
-    "options": [
-        {
+    "options": [{
             "name": "level",
             "description": "The level to set",
             // Type of input from user: https://discord.com/developers/docs/interactions/slash-commands#applicationcommandoptiontype
@@ -24,9 +23,9 @@ module.exports = {
             "type": 6,
             "required": false
         }
-    ],    
-    async execute (interaction) {
-        if(!interaction.member.permissions.has("MANAGE_GUILD")) return interaction.reply(`You do not have permission to use this command!`);
+    ],
+    async execute(interaction) {
+        if (!interaction.member.permissions.has("MANAGE_GUILD")) return interaction.reply(`You do not have permission to use this command!`);
 
         await interaction.deferReply();
 
@@ -36,14 +35,14 @@ module.exports = {
 
         client.getScore = sql.prepare("SELECT * FROM levels WHERE user = ? AND guild = ?");
         client.setScore = sql.prepare("INSERT OR REPLACE INTO levels (id, user, guild, xp, level, totalXP) VALUES (@id, @user, @guild, @xp, @level, @totalXP);");
-        if(!user) {
+        if (!user) {
             return interaction.reply(`Please mention an user!`)
         } else {
-            if(isNaN(levelArgs) || levelArgs < 1) {
+            if (isNaN(levelArgs) || levelArgs < 1) {
                 return interaction.editReply(`Please provide a valid number!`)
             } else {
                 let score = client.getScore.get(user.id, interaction.guild.id);
-                if(!score) {
+                if (!score) {
                     score = {
                         id: `${interaction.guild.id}-${user.id}`,
                         user: user.id,
@@ -59,11 +58,13 @@ module.exports = {
                     .setTitle(`Success!`)
                     .setDescription(`Successfully set ${levelArgs} level for ${user.toString()}!`)
                     .setColor("#5AC0DE");
-                
+
                 score.totalXP = newTotalXP * 2 * 250 + 250
                 score.xp = 0
                 client.setScore.run(score);
-                return interaction.editReply({embeds: [embed]});
+                return interaction.editReply({
+                    embeds: [embed]
+                });
             }
         }
     }

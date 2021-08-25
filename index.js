@@ -12,11 +12,19 @@ client.commands = new Discord.Collection();
 
 const SQLite = require("better-sqlite3");
 const fs = require("fs");
-const { REST } = require("@discordjs/rest");
-const { Routes } = require("discord-api-types/v9");
+const {
+	REST
+} = require("@discordjs/rest");
+const {
+	Routes
+} = require("discord-api-types/v9");
 
-const commandFiles = fs.readdirSync("./commands").filter((file) => file.endsWith(".js"));
-const eventFiles = fs.readdirSync("./events").filter((file) => file.endsWith(".js"));
+const commandFiles = fs
+	.readdirSync("./commands")
+	.filter((file) => file.endsWith(".js"));
+const eventFiles = fs
+	.readdirSync("./events")
+	.filter((file) => file.endsWith(".js"));
 
 // Token, Owner ID, and Application ID
 const config = require("./config.json");
@@ -37,15 +45,22 @@ for (const file of eventFiles) {
 	}
 }
 
-const commands = client.commands.map(({ execute, ...data }) => data);
+const commands = client.commands.map(({
+	execute,
+	...data
+}) => data);
 
-const rest = new REST({ version: "9" }).setToken(config.token);
+const rest = new REST({
+	version: "9",
+}).setToken(config.token);
 
 (async () => {
 	try {
 		console.log("Started refreshing application (/) commands.");
 
-		await rest.put(Routes.applicationCommands(config.appID), { body: commands });
+		await rest.put(Routes.applicationCommands(config.appID), {
+			body: commands,
+		});
 
 		console.log("Successfully reloaded application (/) commands.");
 	} catch (error) {

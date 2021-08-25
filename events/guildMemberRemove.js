@@ -1,4 +1,6 @@
-const { deleteLevel } = require("../sql_functions/sql_functions");
+const {
+    deleteLevel
+} = require("../sql_functions/sql_functions");
 
 module.exports = {
     name: "guildMemberRemove",

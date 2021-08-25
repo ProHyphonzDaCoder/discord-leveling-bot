@@ -1,7 +1,9 @@
 module.exports = {
 	name: "interactionCreate",
 	execute: async (interaction) => {
-		const { client } = interaction;
+		const {
+			client
+		} = interaction;
 		if (!interaction.isCommand()) return;
 		if (!client.commands.has(interaction.commandName)) return;
 
@@ -9,15 +11,15 @@ module.exports = {
 			await client.commands.get(interaction.commandName).execute(interaction);
 		} catch (error) {
 			console.error(error);
-			interaction.replied || interaction.deferred
-				? interaction.followUp({
-						content: "There was an error while executing this command!",
-						ephemeral: true,
-				  })
-				: interaction.reply({
-						content: "There was an error while executing this command!",
-						ephemeral: true,
-				  });
+			interaction.replied || interaction.deferred ?
+				interaction.followUp({
+					content: "There was an error while executing this command!",
+					ephemeral: true,
+				}) :
+				interaction.reply({
+					content: "There was an error while executing this command!",
+					ephemeral: true,
+				});
 		}
 	},
 };

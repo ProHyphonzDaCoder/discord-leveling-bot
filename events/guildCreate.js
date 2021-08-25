@@ -1,4 +1,7 @@
-const { sql, deleteLevel } = require("../sql_functions/sql_functions");
+const {
+	sql,
+	deleteLevel
+} = require("../sql_functions/sql_functions");
 
 let getLevels = sql.prepare("SELECT user FROM levels WHERE guild = ?");
 

@@ -1,4 +1,6 @@
-const { MessageEmbed } = require("discord.js");
+const {
+	MessageEmbed
+} = require("discord.js");
 const SQlite = require("better-sqlite3");
 const sql = new SQlite("./mainDB.sqlite");
 
@@ -8,8 +10,7 @@ module.exports = {
 	category: "Leveling",
 	description: "Give or Add level to specified user",
 	cooldown: 3,
-	options: [
-		{
+	options: [{
 			name: "level",
 			description: "The level(s) to add",
 			// Type of input from user: https://discord.com/developers/docs/interactions/slash-commands#applicationcommandoptiontype
@@ -24,7 +25,9 @@ module.exports = {
 		},
 	],
 	execute(interaction) {
-		const { client } = interaction;
+		const {
+			client
+		} = interaction;
 		const user = interaction.options.getUser("user") || interaction.user;
 
 		if (!interaction.member.permissions.has("MANAGE_GUILD"))
@@ -61,6 +64,8 @@ module.exports = {
 
 		score.totalXP += newTotalXP * 2 * 250 + 250;
 		client.setScore.run(score);
-		return interaction.reply({ embeds: [embed] });
+		return interaction.reply({
+			embeds: [embed]
+		});
 	},
 };

@@ -1,17 +1,25 @@
 const Discord = require("discord.js");
-const { sql } = require("../sql_functions/sql_functions");
+const {
+    sql
+} = require("../sql_functions/sql_functions");
 
 const Canvas = require('canvas');
-const { fillTextWithTwemoji } = require('node-canvas-with-twemoji-and-discord-emoji');
-const { joinImages } = require('join-images');
+const {
+    fillTextWithTwemoji
+} = require('node-canvas-with-twemoji-and-discord-emoji');
+const {
+    joinImages
+} = require('join-images');
 
 // Pictures
 let background; // variable for backgrond image
-let saveBg = (image) => { background = image } // assigns background image to variable
+let saveBg = (image) => {
+    background = image
+} // assigns background image to variable
 Canvas.loadImage(__dirname + '/../images/lb-background.png').then(image => saveBg(image)); // saves background image
 
 // Canvas for testing length of strings
-const testCanvas = Canvas.createCanvas(1, 1); 
+const testCanvas = Canvas.createCanvas(1, 1);
 const testContext = testCanvas.getContext('2d');
 testContext.font = '26px sans-serif';
 testContext.fillStyle = '#ffffff';
@@ -106,18 +114,18 @@ module.exports = {
                 }));
 
                 context.save();
-                roundedImage(0,i * 55,50,50, 5, context);
+                roundedImage(0, i * 55, 50, 50, 5, context);
                 context.clip();
                 //context.drawImage(avatar, 0, i * (39 *2), 102,77);
                 context.drawImage(avatar, 0, i * 55, 50, 50);
 
                 context.restore();
 
-                if(Number(i) + 1 == 1) {
+                if (Number(i) + 1 == 1) {
                     var rankText = "🥇";
-                } else if(Number(i) + 1 == 2) {
+                } else if (Number(i) + 1 == 2) {
                     var rankText = "🥈";
-                } else if(Number(i) + 1 == 3) {
+                } else if (Number(i) + 1 == 3) {
                     var rankText = "🥉";
                 } else {
                     var rankText = `#${Number(i) + 1}`;
@@ -126,15 +134,15 @@ module.exports = {
                     context,
                     `${rankText}`,
                     60,
-                    (i * 55) + (50/2));
+                    (i * 55) + (50 / 2));
                 context.fillText(
                     `${specifiedUser.tag}`,
                     60 + rankWidth + 20,
-                    (i * 55) + (50/2));
+                    (i * 55) + (50 / 2));
                 context.fillText(
                     `LVL ${myList[i].level}`,
                     60 + rankWidth + 20 + longestEntry + 20,
-                    (i * 55) + (50/2));
+                    (i * 55) + (50 / 2));
             }
             return canvas.toBuffer('image/png');
         }
@@ -157,7 +165,7 @@ module.exports = {
             return canvas.toBuffer('image/png');
         }
 
-        let roundedImage = (x,y,width,height,radius, context) => {
+        let roundedImage = (x, y, width, height, radius, context) => {
             context.beginPath();
             context.moveTo(x + radius, y);
             context.lineTo(x + width - radius, y);
@@ -190,11 +198,9 @@ module.exports = {
 
         let end = new Date().getTime();
         console.log("Time taken to create Leaderboard in ms:", end - start);
-        return interaction.editReply(
-            { 
-                embeds: [embed],
-                files: [attachment]
-            }
-        )
+        return interaction.editReply({
+            embeds: [embed],
+            files: [attachment]
+        })
     }
 }
