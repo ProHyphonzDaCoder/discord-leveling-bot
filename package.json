@@ -5,7 +5,7 @@
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ConnorAhern/canvacord-leveling-bot.git"
+    "url": "git+https://github.com/hyphonz-bots/discord-leveling-bot.git"
   },
   "author": "Connor Ahern",
   "license": "MPL-2.0",
