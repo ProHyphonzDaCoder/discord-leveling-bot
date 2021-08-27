@@ -1,3 +1,5 @@
+const { addFrequency } = require("../sql_functions/sql_functions");
+
 module.exports = {
 	name: "interactionCreate",
 	execute: async (interaction) => {
@@ -9,6 +11,7 @@ module.exports = {
 
 		try {
 			await client.commands.get(interaction.commandName).execute(interaction);
+			addFrequency.run(interaction.commandName);
 		} catch (error) {
 			console.error(error);
 			interaction.replied || interaction.deferred ?

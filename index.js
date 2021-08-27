@@ -10,7 +10,7 @@ const client = new Discord.Client({
 });
 client.commands = new Discord.Collection();
 
-const SQLite = require("better-sqlite3");
+const { sql } = require("./sql_functions/sql_functions");
 const fs = require("fs");
 const {
 	REST
@@ -29,11 +29,21 @@ const eventFiles = fs
 // Token, Owner ID, and Application ID
 const config = require("./config.json");
 
+let commandsInDB = sql
+    .prepare("SELECT * FROM commands")
+    .all();
+commandsInDB = commandsInDB.map(command => command.name);
+let addCommand = sql.prepare("INSERT INTO commands (name, frequency) VALUES (?, 0);");
+
 for (const file of commandFiles) {
 	const command = require(`./commands/${file}`);
 	// set a new item in the Collection
 	// with the key as the command name and the value as the exported module
 	client.commands.set(command.name, command);
+
+	if (!commandsInDB.includes(command.name)) {
+		addCommand.run(command.name);
+	}
 }
 
 for (const file of eventFiles) {

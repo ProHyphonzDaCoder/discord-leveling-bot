@@ -24,6 +24,8 @@ if (!allTables.find((table) => table.name == "settings"))
     );
 if (!allTables.find((table) => table.name == "channel"))
     sql.exec("CREATE TABLE channel (guild TEXT PRIMARY KEY, channel TEXT);");
+if (!allTables.find((table) => table.name == "commands"))
+    sql.exec("CREATE TABLE commands (name TEXT PRIMARY KEY, frequency INTEGER DEFAULT 0);");
 
 let getLevel = sql.prepare("SELECT * FROM levels WHERE user = ? AND guild = ?");
 let setLevel = sql.prepare(
@@ -53,6 +55,8 @@ let serverRoles = sql.prepare(
 );
 let doubleXPRole = sql.prepare("SELECT role FROM 'doubleXP' WHERE guild = ?");
 
+let addFrequency = sql.prepare("UPDATE commands SET frequency = frequency + 1 WHERE name = ?;");
+
 module.exports = {
     sql, // SQLite object
     getLevel,
@@ -66,4 +70,5 @@ module.exports = {
     channelLevel,
     serverRoles,
     doubleXPRole,
+    addFrequency
 };
