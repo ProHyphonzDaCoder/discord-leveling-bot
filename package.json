@@ -21,7 +21,6 @@
     "better-sqlite3": "^7.1.5",
     "canvacord": "^5.2.1",
     "canvas": "^2.8.0",
-    "discord-together": "^1.1.62",
     "discord.js": "^13.1.0",
     "fs": "0.0.1-security",
     "join-images": "^0.2.9",
