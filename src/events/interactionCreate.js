@@ -1,18 +1,19 @@
-const { addFrequency } = require("../sql_functions/sql_functions");
+const { addFrequency } = require('./../functions/sql');
 
 module.exports = {
 	name: "interactionCreate",
 	execute: async (interaction) => {
-		const {
-			client
-		} = interaction;
+
+		const { client } = interaction;
+
 		if (!interaction.isCommand()) return;
 		if (!client.commands.has(interaction.commandName)) return;
 
 		try {
 			await client.commands.get(interaction.commandName).execute(interaction);
 			addFrequency.run(interaction.commandName);
-		} catch (error) {
+		}
+		catch (error) {
 			console.error(error);
 			interaction.replied || interaction.deferred ?
 				interaction.followUp({
