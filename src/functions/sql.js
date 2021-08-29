@@ -45,6 +45,7 @@ let serverRoles = sql.prepare("SELECT * FROM roles WHERE guildID = ? AND level =
 let doubleXPRole = sql.prepare("SELECT role FROM 'doubleXP' WHERE guild = ?");
 
 let addFrequency = sql.prepare("UPDATE commands SET frequency = frequency + 1 WHERE name = ?;");
+let commandStats = sql.prepare("SELECT * FROM commands WHERE name = ?;");
 
 module.exports = {
 	sql,
