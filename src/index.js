@@ -1,10 +1,7 @@
 const Discord = require("discord.js");
 const client = new Discord.Client({
-	intents: [ Discord.Intents.FLAGS.GUILDS, Discord.Intents.FLAGS.GUILD_MESSAGES, Discord.Intents.FLAGS.GUILD_MEMBERS, Discord.Intents.FLAGS.GUILD_PRESENCES ]
+	intents: [ Discord.Intents.FLAGS.GUILDS, Discord.Intents.FLAGS.GUILD_MESSAGES, Discord.Intents.FLAGS.GUILD_MEMBERS, Discord.Intents.FLAGS.GUILD_PRESENCES, ],
 });
-
-const { REST } = require("@discordjs/rest");
-const { Routes } = require("discord-api-types/v9");
 
 const { sql } = require("./functions/sql");
 const config = require("./../config.json");
@@ -32,18 +29,5 @@ for (const file of eventFiles) {
 	if (file.once) { client.once(event.name, event.execute); }
 	else { client.on(event.name, event.execute); }
 }
-
-const commands = client.commands.map(({ execute, ...data }) => data);
-const rest = new REST({ version: "9" }).setToken(config.token);
-
-(async () => {
-	console.log("Started refreshing application (/) commands.");
-	try {
-		await rest.put(Routes.applicationCommands(config.appID), { body: commands });
-		console.log("Successfully reloaded application (/) commands.");
-	} catch (error) {
-		console.error(error);
-	}
-})();
 
 client.login(config.token);

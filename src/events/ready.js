@@ -21,7 +21,7 @@ module.exports = {
 		console.log(`Logged in as ${client.user.tag}!`);
 
 		let data = [];
-		const commandFiles = fs.readdirSync(`${__dirname}/..//commands`).filter((file) => file.endsWith(".js"));
+		const commandFiles = fs.readdirSync(`${__dirname}/../commands`).filter((file) => file.endsWith(".js"));
 		for (const file of commandFiles) {
 
 			let object = {};
