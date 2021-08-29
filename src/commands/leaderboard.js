@@ -9,7 +9,7 @@ let background;
 let saveBg = (image) => {
 	background = image;
 };
-Canvas.loadImage(__dirname + './..//../images/lb-background.png').then(image => saveBg(image));
+Canvas.loadImage(__dirname + '/../../images/lb-background.png').then(image => saveBg(image));
 
 // Canvas for testing length of strings
 const testCanvas = Canvas.createCanvas(1, 1);
