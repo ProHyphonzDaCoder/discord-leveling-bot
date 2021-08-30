@@ -60,5 +60,6 @@ module.exports = {
 	channelLevel,
 	serverRoles,
 	doubleXPRole,
-	addFrequency
+	addFrequency,
+	commandStats
 };
