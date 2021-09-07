@@ -1,7 +1,7 @@
 const { MessageAttachment } = require("discord.js");
 const SQLite = require("better-sqlite3");
 const sql = new SQLite("./mainDB.sqlite");
-const { Rank } = require("canvacord");
+const Rank = require("../structures/Rank/Rank");
 
 module.exports = {
 	name: "rank",
@@ -42,38 +42,23 @@ module.exports = {
 			);
 
 		const levelInfo = score.level;
-		const nextXP = levelInfo * 2 * 250 + 250;
+		const nextXP = levelInfo || 1 * 175;
 		const xpInfo = score.xp;
 		const totalXP = score.totalXP;
 
 		const rank = top10.sort((a, b) => b.totalXP - a.totalXP);
 		const ranking = rank.map((x) => x.totalXP).indexOf(totalXP) + 1;
 
-		let cardBg;
-		let bgType;
-		try {
-			cardBg = sql
-				.prepare("SELECT bg FROM background WHERE user = ? AND guild = ?")
-				.get(user.id, interaction.guild.id).bg;
-			bgType = "IMAGE";
-		} catch (e) {
-			cardBg = "#000000";
-			bgType = "COLOR";
-		}
-
-		const rankCard = new Rank()
-			.setAvatar(user.user.displayAvatarURL({ format: "jpg" }))
-			.setStatus(user?.presence?.status ?? "offline", true, 1)
-			.setCurrentXP(xpInfo)
-			.setRequiredXP(nextXP)
-			.setProgressBar("#5AC0DE", "COLOR")
-			.setUsername(user.user.username)
-			.setDiscriminator(user.user.discriminator)
-			.setRank(ranking)
-			.setLevel(levelInfo)
-			.setLevelColor("#5AC0DE")
-			.renderEmojis(true)
-			.setBackground(bgType, cardBg);
+		const rankCard = new Rank({
+			username: user.user.username,
+			discrim: user.user.discriminator,
+			avatar: user.user.displayAvatarURL({ format: "png", size: 256 }),
+			level: levelInfo,
+			rank: ranking,
+			xp: xpInfo,
+			required: nextXP,
+			base: "base",
+		});
 
 		const card = await rankCard.build();
 		await interaction.followUp({ files: [new MessageAttachment(card, "RankCard.png")] });
