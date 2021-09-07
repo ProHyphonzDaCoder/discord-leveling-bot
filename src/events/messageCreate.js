@@ -1,12 +1,12 @@
-const sqlFunctions = require('./../functions/sql');
+const sqlFunctions = require("./../functions/sql");
 const msIn5Mins = 1000 * 60 * 5;
 
-let talkedRecently = new Map();
-let latestMessages = new Map();
+const talkedRecently = new Map();
+const latestMessages = new Map();
 
 setInterval(() => {
 	latestMessages.forEach((value, key) => {
-		if (latestMessages.get(key).time > Date.now() - msIn5Mins) { latestMessages.delete(key); }
+		if (latestMessages.get(key).time > Date.now() - msIn5Mins) latestMessages.delete(key);
 	});
 }, msIn5Mins);
 
@@ -18,37 +18,50 @@ module.exports = {
 		if (!message.content) return;
 
 		if (message.content.length < 5) return;
-		if (!message.content.includes(' ')) return;
+		if (!message.content.includes(" ")) return;
 
 		if (latestMessages.has(`${message.author.id}-${message.guild.id}`)) {
-			let lastMessage = latestMessages.get(`${message.author.id}-${message.guild.id}`);
+			const lastMessage = latestMessages.get(`${message.author.id}-${message.guild.id}`);
 			if (lastMessage.content == message.content) return;
 		}
 
 		latestMessages.set(`${message.author.id}-${message.guild.id}`, {
 			content: message.content,
-			time: Date.now()
+			time: Date.now(),
 		});
 
 		// 2X XP table
+		let xpMulti;
 		const doubleXPTable = sqlFunctions.doubleXPRole.get(message.guild.id);
-		if (typeof doubleXPTable != "undefined" && typeof doubleXPTable.role != "undefined" && message.member.roles.cache.has(doubleXPTable['role'])) {
-			var xpMulti = 2;
-		}
-		else {
-			xpMulti = 1;
-		}
+		if (
+			typeof doubleXPTable != "undefined" &&
+			typeof doubleXPTable.role != "undefined" &&
+			message.member.roles.cache.has(doubleXPTable["role"])
+		)
+			xpMulti = 2;
+		else xpMulti = 1;
 
-		if (sqlFunctions.blacklist.get(`${message.guild.id}-${message.author.id}`) || sqlFunctions.blacklist.get(`${message.guild.id}-${message.channel.id}`)) return;
+		if (
+			sqlFunctions.blacklist.get(`${message.guild.id}-${message.author.id}`) ||
+			sqlFunctions.blacklist.get(`${message.guild.id}-${message.channel.id}`)
+		)
+			return;
 
 		const level = sqlFunctions.getLevel.get(message.author.id, message.guild.id);
 		if (!level) {
-			sqlFunctions.insertLevel.run(`${message.author.id}-${message.guild.id}`, message.author.id, message.guild.id, 0, 0, 0);
+			sqlFunctions.insertLevel.run(
+				`${message.author.id}-${message.guild.id}`,
+				message.author.id,
+				message.guild.id,
+				0,
+				0,
+				0
+			);
 			return;
 		}
 
-		let customSettings = sqlFunctions.serverSettings.get(message.guild.id);
-		let channelLevel = sqlFunctions.channelLevel.get(message.guild.id);
+		const customSettings = sqlFunctions.serverSettings.get(message.guild.id);
+		const channelLevel = sqlFunctions.channelLevel.get(message.guild.id);
 
 		const lvl = level.level;
 
@@ -58,8 +71,7 @@ module.exports = {
 		if (!customSettings) {
 			getXpfromDB = 16;
 			getCooldownfromDB = 1000;
-		}
-		else {
+		} else {
 			getXpfromDB = customSettings.customXP;
 			getCooldownfromDB = customSettings.customCooldown;
 		}
@@ -70,8 +82,7 @@ module.exports = {
 		// message content or characters length has to be more than 4 characters also cooldown
 		if (talkedRecently.get(message.author.id) || message.content.length < 3) {
 			return;
-		}
-		else {
+		} else {
 			level.xp += generatedXp;
 			level.totalXP += generatedXp;
 
@@ -84,9 +95,8 @@ module.exports = {
 
 				if (!customSettings) {
 					levelUpMsg = `**Congratulations** ${message.author}! You have now leveled up to **level ${level.level}**`;
-				}
-				else {
-					let antonymsLevelUp = (string) => {
+				} else {
+					const antonymsLevelUp = (string) => {
 						return string
 							.replace(/{member}/i, `${message.member}`)
 							.replace(/{xp}/i, `${level.xp}`)
@@ -100,28 +110,34 @@ module.exports = {
 				try {
 					if (!channelLevel || channelLevel.channel == "Default") {
 						message.channel.send(levelUpMsg);
-					}
-					else {
-						let channel = message.guild.channels.cache.get(channelLevel.channel);
+					} else {
+						const channel = message.guild.channels.cache.get(channelLevel.channel);
 						const permissionFlags = channel.permissionsFor(message.guild.me);
-						if (!permissionFlags.has("SEND_MESSAGES") || !permissionFlags.has("VIEW_CHANNEL")) return;
+						if (!permissionFlags.has("SEND_MESSAGES") || !permissionFlags.has("VIEW_CHANNEL"))
+							return;
 						channel.send(levelUpMsg);
 					}
-				}
-				catch (err) {
+				} catch (err) {
 					if (!channelLevel || channelLevel.channel == "Default") {
 						message.channel.send(levelUpMsg);
-					}
-					else {
-						let channel = message.guild.channels.cache.get(channelLevel.channel);
+					} else {
+						const channel = message.guild.channels.cache.get(channelLevel.channel);
 						const permissionFlags = channel.permissionsFor(message.guild.me);
-						if (!permissionFlags.has("SEND_MESSAGES") || !permissionFlags.has("VIEW_CHANNEL")) return;
+						if (!permissionFlags.has("SEND_MESSAGES") || !permissionFlags.has("VIEW_CHANNEL"))
+							return;
 						channel.send(levelUpMsg);
 					}
 				}
 			}
 
-			sqlFunctions.setLevel.run(`${message.author.id}-${message.guild.id}`, message.author.id, message.guild.id, level.xp, level.level, level.totalXP);
+			sqlFunctions.setLevel.run(
+				`${message.author.id}-${message.guild.id}`,
+				message.author.id,
+				message.guild.id,
+				level.xp,
+				level.level,
+				level.totalXP
+			);
 			// add cooldown to user
 			talkedRecently.set(message.author.id, Date.now() + getCooldownfromDB);
 			setTimeout(() => talkedRecently.delete(message.author.id), getCooldownfromDB);
@@ -129,15 +145,17 @@ module.exports = {
 
 		// level up, time to add level roles
 		const member = message.member;
-		let roles = sqlFunctions.serverRoles.get(message.guild.id, lvl);
+		const roles = sqlFunctions.serverRoles.get(message.guild.id, lvl);
 		if (!roles) return;
-		if (lvl >= roles.level) {
+		if (lvl >= roles.level)
 			if (roles) {
-				if (member.roles.cache.get(roles.roleID) || !message.guild.me.permissions.has("MANAGE_ROLES")) {
+				if (
+					member.roles.cache.get(roles.roleID) ||
+					!message.guild.me.permissions.has("MANAGE_ROLES")
+				)
 					return;
-				}
+
 				member.roles.add(roles.roleID);
 			}
-		}
-	}
+	},
 };

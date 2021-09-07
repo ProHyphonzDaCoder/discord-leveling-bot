@@ -1,8 +1,8 @@
 const SQLite = require("better-sqlite3");
-const sql = new SQLite('./mainDB.sqlite');
+const sql = new SQLite("./mainDB.sqlite");
 
 module.exports = {
-	name: 'double-xp-role',
+	name: "double-xp-role",
 	aliases: [],
 	category: "Leveling",
 	description: "Set specific channel to send level up message",
@@ -15,9 +15,9 @@ module.exports = {
 	}],
 	cooldown: 3,
 	async execute(interaction) {
-		if (!interaction.member.permissions.has("MANAGE_GUILD")) return interaction.reply(`You do not have permission to use this command!`);
+		if (!interaction.member.permissions.has("MANAGE_GUILD")) return interaction.reply("You do not have permission to use this command!");
 
-		let role = interaction.options.getRole("role");
+		const role = interaction.options.getRole("role");
 
 		sql.prepare("INSERT OR REPLACE INTO doubleXP (guild, role) VALUES (?, ?);").run(interaction.guild.id, role.id);
 		return interaction.reply(`Double XP role has been set to ${role.name}`);

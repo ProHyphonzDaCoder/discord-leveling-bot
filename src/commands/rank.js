@@ -8,12 +8,14 @@ module.exports = {
 	aliases: ["rank"],
 	description: "Get your rank or another member's rank",
 	cooldown: 3,
-	options: [{
-		name: "target",
-		description: "The user's rank card to show",
-		type: 6,
-		required: false,
-	}],
+	options: [
+		{
+			name: "target",
+			description: "The user's rank card to show",
+			type: 6,
+			required: false,
+		},
+	],
 	category: "Leveling",
 	async execute(interaction) {
 		if (!interaction.isCommand()) return;
@@ -23,12 +25,21 @@ module.exports = {
 		const user = interaction.options.getMember("target") || interaction.member;
 
 		client.getScore = sql.prepare("SELECT * FROM levels WHERE user = ? AND guild = ?");
-		client.setScore = sql.prepare("INSERT OR REPLACE INTO levels (id, user, guild, xp, level, totalXP) VALUES (@id, @user, @guild, @xp, @level, @totalXP);");
+		client.setScore = sql.prepare(
+			"INSERT OR REPLACE INTO levels (id, user, guild, xp, level, totalXP) VALUES (@id, @user, @guild, @xp, @level, @totalXP);"
+		);
 
-		const top10 = sql.prepare("SELECT * FROM levels WHERE guild = ? ORDER BY totalXP").all(interaction.guild.id);
+		const top10 = sql
+			.prepare("SELECT * FROM levels WHERE guild = ? ORDER BY totalXP")
+			.all(interaction.guild.id);
 		const score = client.getScore.get(user.id, interaction.guild.id);
 
-		if (!score) { return interaction.followUp(user === interaction.member ? "You do not have any XP yet! Chat and be active to get more XP." : `${user.user.username} does not have any XP yet!`); }
+		if (!score)
+			return interaction.followUp(
+				user === interaction.member
+					? "You do not have any XP yet! Chat and be active to get more XP."
+					: `${user.user.username} does not have any XP yet!`
+			);
 
 		const levelInfo = score.level;
 		const nextXP = levelInfo * 2 * 250 + 250;
@@ -41,10 +52,11 @@ module.exports = {
 		let cardBg;
 		let bgType;
 		try {
-			cardBg = sql.prepare("SELECT bg FROM background WHERE user = ? AND guild = ?").get(user.id, interaction.guild.id).bg;
+			cardBg = sql
+				.prepare("SELECT bg FROM background WHERE user = ? AND guild = ?")
+				.get(user.id, interaction.guild.id).bg;
 			bgType = "IMAGE";
-		}
-		catch (e) {
+		} catch (e) {
 			cardBg = "#000000";
 			bgType = "COLOR";
 		}

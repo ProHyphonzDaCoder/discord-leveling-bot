@@ -16,16 +16,16 @@ module.exports = {
 	cooldown: 3,
 	execute(interaction) {
 
-		if (!interaction.member.permissions.has("MANAGE_GUILD")) {
+		if (!interaction.member.permissions.has("MANAGE_GUILD"))
 			return interaction.reply("You do not have permission to use this command!");
-		}
+
 
 		const channel = interaction.options.getChannel("channel");
 
 		const permissionFlags = channel.permissionsFor(interaction.guild.me);
-		if (!permissionFlags.has("SEND_MESSAGES") || !permissionFlags.has("VIEW_CHANNEL")) {
+		if (!permissionFlags.has("SEND_MESSAGES") || !permissionFlags.has("VIEW_CHANNEL"))
 			return interaction.reply(`I don't have permission to send/read messages in ${channel}!`);
-		}
+
 
 		sql.prepare("INSERT OR REPLACE INTO channel (guild, channel) VALUES (?, ?);")
 			.run(interaction.guild.id, channel.id);

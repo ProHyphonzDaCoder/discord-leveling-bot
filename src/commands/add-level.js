@@ -26,9 +26,9 @@ module.exports = {
 		const { client } = interaction;
 		const user = interaction.options.getUser("user") || interaction.user;
 
-		if (!interaction.member.permissions.has("MANAGE_GUILD")) {
+		if (!interaction.member.permissions.has("MANAGE_GUILD"))
 			return interaction.reply("You do not have permission to use this command!");
-		}
+
 
 		const levelArgs = interaction.options.getInteger("level");
 
@@ -36,12 +36,12 @@ module.exports = {
 		client.setScore = sql.prepare("INSERT OR REPLACE INTO levels (id, user, guild, xp, level, totalXP) VALUES (@id, @user, @guild, @xp, @level, @totalXP);");
 
 		if (!user) return interaction.reply("Please mention an user!");
-		if (isNaN(levelArgs) || levelArgs < 1) {
+		if (isNaN(levelArgs) || levelArgs < 1)
 			return interaction.reply("Please provide a valid number!");
-		}
+
 
 		let score = client.getScore.get(user.id, interaction.guild.id);
-		if (!score) {
+		if (!score)
 			score = {
 				id: `${interaction.guild.id}-${user.id}`,
 				user: user.id,
@@ -50,11 +50,11 @@ module.exports = {
 				level: 0,
 				totalXP: 0,
 			};
-		}
+
 		score.level += levelArgs;
 		const newTotalXP = levelArgs - 1;
 		const embed = new MessageEmbed()
-			.setTitle(`Success!`)
+			.setTitle("Success!")
 			.setDescription(`Successfully added ${levelArgs} level to ${user.toString()}!`)
 			.setColor("RANDOM");
 

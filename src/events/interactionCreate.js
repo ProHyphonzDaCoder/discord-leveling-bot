@@ -1,4 +1,4 @@
-const { addFrequency } = require('./../functions/sql');
+const { addFrequency } = require("./../functions/sql");
 
 module.exports = {
 	name: "interactionCreate",
@@ -12,8 +12,7 @@ module.exports = {
 		try {
 			await client.commands.get(interaction.commandName).execute(interaction);
 			addFrequency.run(interaction.commandName);
-		}
-		catch (error) {
+		} catch (error) {
 			console.error(error);
 			interaction.replied || interaction.deferred ?
 				interaction.followUp({
