@@ -13,12 +13,8 @@ setInterval(() => {
 module.exports = {
 	name: "messageCreate",
 	execute: (message) => {
-		if (message.author.bot) return;
-		if (!message.guild) return;
-		if (!message.content) return;
-
-		if (message.content.length < 5) return;
-		if (!message.content.includes(" ")) return;
+		if (message.author.bot || !message.guild || !message.content || message.content.length < 5)
+			return;
 
 		if (latestMessages.has(`${message.author.id}-${message.guild.id}`)) {
 			const lastMessage = latestMessages.get(`${message.author.id}-${message.guild.id}`);
@@ -63,7 +59,7 @@ module.exports = {
 		const customSettings = sqlFunctions.serverSettings.get(message.guild.id);
 		const channelLevel = sqlFunctions.channelLevel.get(message.guild.id);
 
-		const lvl = level.level;
+		const lvl = level.level || 1;
 
 		let getXpfromDB;
 		let getCooldownfromDB;
@@ -77,8 +73,8 @@ module.exports = {
 		}
 
 		// xp system
-		const generatedXp = Math.floor(Math.random() * getXpfromDB);
-		const nextXP = level.level * 2 * 250 + 250 * xpMulti;
+		const generatedXp = Math.floor(Math.random() * getXpfromDB) * xpMulti + 4;
+		const nextXP = level.level * 175;
 		// message content or characters length has to be more than 4 characters also cooldown
 		if (talkedRecently.get(message.author.id) || message.content.length < 3) {
 			return;
