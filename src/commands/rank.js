@@ -38,7 +38,7 @@ module.exports = {
 			return interaction.followUp(
 				user === interaction.member
 					? "You do not have any XP yet! Chat and be active to get more XP."
-					: `${user.user.username} does not have any XP yet!`
+					: `**${user.user.username}** does not have any XP yet!`
 			);
 
 		const levelInfo = score.level;
