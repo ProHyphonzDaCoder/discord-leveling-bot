@@ -1,3 +1,4 @@
+const { fillTextWithTwemoji } = require("node-canvas-with-twemoji-and-discord-emoji");
 const { createCanvas, registerFont, loadImage } = require("canvas");
 const { join } = require("path");
 
@@ -12,7 +13,7 @@ module.exports = class Rank {
 
 	async build() {
 		await this.loadBase(this.data.base);
-		this.drawName();
+		await this.drawName();
 
 		// add discrim (#0000)
 		this.ctx.fillStyle = "#212121";
@@ -113,7 +114,7 @@ module.exports = class Rank {
 		this.ctx.shadowOffsetX = 0;
 	}
 
-	drawName() {
+	async drawName() {
 		const max = 19;
 		this.ctx.font = "regular 30px Poppins";
 		this.ctx.fillStyle = "#fff";
@@ -123,6 +124,7 @@ module.exports = class Rank {
 			this.data.username = this.data.username.slice(0, 19) + "...";
 		}
 
-		this.ctx.fillText(this.data.username, 247, 120);
+		await fillTextWithTwemoji(this.ctx, this.data.username, 247, 120);
+		// this.ctx.fillText(this.data.username, 247, 120);
 	}
 };
