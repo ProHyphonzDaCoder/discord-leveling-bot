@@ -74,7 +74,7 @@ module.exports = {
 
 		// xp system
 		const generatedXp = Math.floor(Math.random() * getXpfromDB) * xpMulti + 4;
-		const nextXP = level.level * 175;
+		const nextXP = level.level * 175 + 175;
 		// message content or characters length has to be more than 4 characters also cooldown
 		if (talkedRecently.get(message.author.id) || message.content.length < 3) {
 			return;

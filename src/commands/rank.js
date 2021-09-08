@@ -42,7 +42,7 @@ module.exports = {
 			);
 
 		const levelInfo = score.level;
-		const nextXP = levelInfo || 1 * 175;
+		const nextXP = levelInfo * 175 + 175;
 		const xpInfo = score.xp;
 		const totalXP = score.totalXP;
 
