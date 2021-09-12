@@ -58,11 +58,11 @@ module.exports = {
 			/*
         y = 175x + 175 = 175;
         y = 175x = 0;
-        y = 0;
+        x = 0;
 
         y = 175x + 175 = 528;
         y = 175x = 358;
-        y = 2.04 -> (Math.floor) 2;
+        x = 2.04 -> (Math.floor) 2;
       */
 
 			const rest = xpArgs - 175;
