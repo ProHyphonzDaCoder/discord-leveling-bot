@@ -40,8 +40,7 @@ module.exports = {
 
 		if (!user) return interaction.reply("Please mention an user!");
 
-		if (isNaN(xpArgs) || xpArgs < 175)
-			return interaction.editReply("Please provide a valid number!");
+		if (isNaN(xpArgs) || xpArgs < 0) return interaction.editReply("Please provide a valid number!");
 
 		let score = client.getScore.get(user.id, interaction.guild.id);
 		if (!score)
@@ -56,6 +55,10 @@ module.exports = {
 
 		const calculateLevel = () => {
 			/*
+				y = 175x + 175 = 25;
+				y = 175x = -150;
+				x = -1.16 -> return 0 using || 0;
+
         y = 175x + 175 = 175;
         y = 175x = 0;
         x = 0;
@@ -66,16 +69,16 @@ module.exports = {
       */
 
 			const rest = xpArgs - 175;
-			const level = rest / 175;
+			const level = Math.floor(rest / 175);
 
-			return Math.floor(level);
+			return level < 0 ? 0 : level;
 		};
 
 		const level = calculateLevel();
 		const requiredXP = level * 175 + 175;
 
 		score.totalXP = xpArgs;
-		score.xp = xpArgs - requiredXP;
+		score.xp = level ? xpArgs - requiredXP : xpArgs;
 		score.level = level;
 
 		const embed = new MessageEmbed()
