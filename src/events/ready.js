@@ -1,4 +1,5 @@
 const fs = require("fs");
+const config = require("../../config.json");
 
 const { sql, deleteLevel } = require("./../functions/sql");
 const getLevels = sql.prepare("SELECT user FROM levels WHERE guild = ?");
@@ -32,6 +33,7 @@ module.exports = {
 			data.push(object);
 		}
 
+		if (config.guildId?.length > 0) return client.application.commands.set(data, config.guildId);
 		client.application.commands.set(data);
 	},
 };
