@@ -1,4 +1,6 @@
+const config = require("../../config.json");
 const EventListener = require("../structures/EventListener");
+
 const { sql, deleteLevel } = require("./../functions/sql");
 const getLevels = sql.prepare("SELECT user FROM levels WHERE guild = ?");
 
@@ -28,6 +30,7 @@ module.exports = class Ready extends EventListener {
 			options: cmd.options,
 		}));
 
+		if (config.guildId?.length > 0) return this.client.application.commands.set(commands, config.guildId);
 		this.client.application.commands.set(commands);
 	}
 };

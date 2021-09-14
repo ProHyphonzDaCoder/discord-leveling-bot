@@ -1,4 +1,5 @@
 {
     "token": "bot token",
-    "appID": "application id"
+    "appID": "application id",
+    "guildId": "the guild id of your test guild, only use this when in dev mode, it will reduce the / reload time"
 }
