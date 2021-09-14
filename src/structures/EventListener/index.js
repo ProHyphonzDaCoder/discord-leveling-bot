@@ -1,9 +1,18 @@
+const { sep } = require("path");
+
 module.exports = class EventListener {
-	constructor(client, options) {
+	constructor(context, options) {
 		this.name = options.name;
 		this.once = options.once;
 
-		this.client = client;
+		const paths = context.path.split(sep);
+		this.fullCategory = paths.slice(paths.indexOf("events") + 1, -1);
+
+		this.client = context.client;
+	}
+
+	get category() {
+		return this.fullCategory?.length > 0 ? this.fullCategory[0] : "General";
 	}
 
 	async run() {
