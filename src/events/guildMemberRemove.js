@@ -1,14 +1,9 @@
-const EventListener = require("../structures/EventListener");
 const { deleteLevel } = require("./../functions/sql");
 
-module.exports = class GuildMemberRemove extends EventListener {
-	constructor(context) {
-		super(context, {
-			name: "guildMemberRemove",
-		});
-	}
+module.exports = {
+	name: "guildMemberRemove",
+	execute: (member) => {
 
-	run(member) {
 		if (!member.id) return;
 		if (!member.guild.id) return;
 

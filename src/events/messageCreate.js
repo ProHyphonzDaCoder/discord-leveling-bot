@@ -1,25 +1,18 @@
 const sqlFunctions = require("./../functions/sql");
-const msIn5Mins = 1e3 * 60 * 5;
+const msIn5Mins = 1000 * 60 * 5;
 
 const talkedRecently = new Map();
 const latestMessages = new Map();
 
 setInterval(() => {
-	latestMessages.forEach((_, key) => {
+	latestMessages.forEach((value, key) => {
 		if (latestMessages.get(key).time > Date.now() - msIn5Mins) latestMessages.delete(key);
 	});
 }, msIn5Mins);
 
-const EventListener = require("../structures/EventListener");
-
-module.exports = class MessageCreate extends EventListener {
-	constructor(context) {
-		super(context, {
-			name: "messageCreate",
-		});
-	}
-
-	run(message) {
+module.exports = {
+	name: "messageCreate",
+	execute: (message) => {
 		if (message.author.bot || !message.guild || !message.content || message.content.length < 5)
 			return;
 
@@ -160,5 +153,5 @@ module.exports = class MessageCreate extends EventListener {
 
 				member.roles.add(roles.roleID);
 			}
-	}
+	},
 };
