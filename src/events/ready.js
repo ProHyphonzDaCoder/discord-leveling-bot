@@ -30,7 +30,8 @@ module.exports = class Ready extends EventListener {
 			options: cmd.options,
 		}));
 
-		if (config.guildId?.length > 0) return this.client.application.commands.set(commands, config.guildId);
+		if (config.guildId?.length > 0)
+			return this.client.application.commands.set(commands, config.guildId);
 		this.client.application.commands.set(commands);
 	}
 };
