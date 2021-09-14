@@ -1,5 +1,5 @@
 const Discord = require("discord.js");
-const { sql } = require("./../functions/sql");
+const { sql } = require("../../functions/sql");
 const Canvas = require("canvas");
 const { fillTextWithTwemoji } = require("node-canvas-with-twemoji-and-discord-emoji");
 
