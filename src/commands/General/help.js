@@ -25,35 +25,28 @@ module.exports = class HelpCommand extends Command {
 		const { commands } = this.client;
 		const cmd = interaction.options.getString("command");
 		if (!cmd) {
-			const help = new MessageEmbed()
+			const embed = new MessageEmbed()
 				.setColor("#2E294E")
-				.setAuthor("Hyphonz")
-				.setTitle("Command List")
+				.setTitle("Hyphonz - Command List")
 				.setThumbnail(
 					"https://media.discordapp.net/attachments/876895206463635509/878355593881083914/Hyphonz_1.png"
-				)
-				.addFields(
-					{
-						name: "Leveling Commands",
-						value:
-							"<:reply:878354292845735937>`rank`\n<:reply:878354292845735937>`background` \n<:reply:878354292845735937>`leaderboard`",
-						inline: true,
-					},
-					{
-						name: "Configuration Commands (admin-only)",
-						value:
-							"<:reply:878354292845735937>`levelupmessage`\n<:reply:878354292845735937>`xpsettings`\n<:reply:878354292845735937>`channel-levelup`\n<:reply:878354292845735937>`role-level`\n<:reply:878354292845735937>`add-level`\n<:reply:878354292845735937>`doublexprole`",
-						inline: true,
-					}
-				)
+				);
+
+			const categories = this.sortCategory([...new Set(commands.map((c) => c.category))]);
+			for (const category of categories) {
+				const cmds = commands.filter((c) => c.category === category);
+				embed.addField(`• ${category}`, cmds.map((c) => `╰ \`${c.name}\``).join("\n"), true);
+			}
+
+			embed
 				.addField(
 					"The Nexus",
-					"\n[Support server](https://discord.gg/6SbwSCzehm)\n[Bot invite](https://discord.com/oauth2/authorize?client_id=837864244728692736&permissions=1593305202&scope=bot+applications.commands)",
+					"[Support server](https://discord.gg/6SbwSCzehm)\n[Bot invite](https://discord.com/oauth2/authorize?client_id=837864244728692736&permissions=1593305202&scope=bot+applications.commands)",
 					true
 				)
 				.setTimestamp();
 
-			return interaction.reply({ embeds: [help] });
+			return interaction.reply({ embeds: [embed] });
 		}
 
 		const command =
@@ -74,13 +67,18 @@ module.exports = class HelpCommand extends Command {
 					command.description ? command.description : "None"
 				}\n<:reply:878354292845735937> **Category**: ${
 					command.category ? command.category : "General" || "Misc"
-				}\n<:reply:878354292845735937> **Aliases**: ${
-					command.aliases ? command.aliases.join(", ") : "None"
 				}\n<:reply:878354292845735937> **Cooldown**: ${
 					command.cooldown ? command.cooldown : "None"
 				}`
 			);
 
 		await interaction.reply({ embeds: [embed] });
+	}
+
+	sortCategory(categories) {
+		const values = [];
+		categories.forEach((c) => (c === "General" ? values.unshift(c) : values.push(c)));
+
+		return values;
 	}
 };
