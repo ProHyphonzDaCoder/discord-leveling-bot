@@ -2,7 +2,7 @@ const Discord = require("discord.js");
 const { sql } = require("../../functions/sql");
 const Canvas = require("canvas");
 const { fillTextWithTwemoji } = require("node-canvas-with-twemoji-and-discord-emoji");
-
+const Command = require("../../structures/Command");
 // Pictures
 let background;
 const saveBg = (image) => {
@@ -25,10 +25,15 @@ const sorryWidth = 20 + sorryBottomWidth + 20;
 // SQLite query for getting top 10 most active users in guild
 const top10Sql = sql.prepare("SELECT * FROM levels WHERE guild = ? ORDER BY totalXP DESC;");
 
-module.exports = {
-	name: "leaderboard",
-	description: "Check the top 10 users with the most XP",
-	async execute(interaction) {
+module.exports = class LeaderboardCommand extends Command {
+	constructor(context) {
+		super(context, {
+			name: "leaderboard",
+			description: "Check the top 10 users with the most XP",
+		});
+	}
+
+	async run(interaction) {
 		const start = new Date().getTime();
 		await interaction.deferReply();
 
@@ -179,5 +184,5 @@ module.exports = {
 		const end = new Date().getTime();
 		console.log("Time taken to create Leaderboard in ms:", end - start);
 		return interaction.editReply({ embeds: [embed], files: [attachment] });
-	},
+	}
 };
