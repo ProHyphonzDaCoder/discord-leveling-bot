@@ -28,6 +28,9 @@ if (!allTables.find((table) => table.name == "channel"))
 if (!allTables.find((table) => table.name == "commands"))
 	sql.exec("CREATE TABLE commands (name TEXT PRIMARY KEY, frequency INTEGER DEFAULT 0);");
 
+if (!allTables.find((table) => table.name == "balance"))
+	sql.exec("CREATE TABLE balance (user TEXT PRIMARY KEY, amount INTEGER DEFAULT 0);");
+
 const getLevel = sql.prepare("SELECT * FROM levels WHERE user = ? AND guild = ?");
 const setLevel = sql.prepare("INSERT OR REPLACE INTO levels (id, user, guild, xp, level, totalXP) VALUES (?, ?, ?, ?, ?, ?);");
 const deleteLevel = sql.prepare("DELETE FROM levels WHERE user = ? AND guild = ?");
