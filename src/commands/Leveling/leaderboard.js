@@ -3,12 +3,14 @@ const { sql } = require("../../functions/sql");
 const Canvas = require("canvas");
 const { fillTextWithTwemoji } = require("node-canvas-with-twemoji-and-discord-emoji");
 const Command = require("../../structures/Command");
+const { join } = require("path");
+
 // Pictures
 let background;
 const saveBg = (image) => {
 	background = image;
 };
-Canvas.loadImage(__dirname + "/../../images/lb-background.png").then((image) => saveBg(image));
+Canvas.loadImage(join(process.cwd(), "images", "lb-background.png")).then((image) => saveBg(image));
 
 // Canvas for testing length of strings
 const testCanvas = Canvas.createCanvas(1, 1);
