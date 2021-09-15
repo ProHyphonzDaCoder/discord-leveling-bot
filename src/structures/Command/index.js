@@ -5,7 +5,7 @@ module.exports = class Command {
 		this.name = options.name;
 		this.description = options.description;
 		this.cooldown = options.cooldown;
-		this.options = options.options;
+		this.options = options.options ?? [];
 
 		const paths = context.path.split(sep);
 		this.fullCategory = paths.slice(paths.indexOf("commands") + 1, -1);
