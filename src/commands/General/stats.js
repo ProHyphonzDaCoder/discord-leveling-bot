@@ -1,28 +1,31 @@
 const { MessageEmbed } = require("discord.js");
-const { commandStats } = require("../functions/sql");
+const { commandStats } = require("../../functions/sql");
+const Command = require("../../structures/Command");
 
-module.exports = {
-	name: "stats",
-	category: "Exclusive",
-	cooldown: 3,
-	description: "List command statistics",
-	options: [
-		{
-			name: "command",
-			description: "Specify a command whose statistics must be retrieved.",
-			// Type of input from user: https://discord.com/developers/docs/interactions/slash-commands#applicationcommandoptiontype
-			type: 3,
-			required: true, // for now
-		},
-	],
-	async execute(interaction) {
+module.exports = class StatsCommand extends Command {
+	constructor(context) {
+		super(context, {
+			name: "stats",
+			cooldown: 3,
+			description: "List command statistics",
+			options: [
+				{
+					name: "command",
+					description: "Specify a command whose statistics must be retrieved.",
+					type: 3,
+					required: true, // for now
+				},
+			],
+		});
+	}
+	async run(interaction) {
 		if (!interaction.guild.me.permissions.has("EMBED_LINKS"))
 			return interaction.channel.send("Missing Permission: `EMBED_LINKS`");
 
-		if (interaction.options.getString("command")) {
+		const cmd = interaction.options.getString("command");
+		if (cmd) {
 			const name = interaction.options.getString("command").toLowerCase();
 			const command = commandStats.get(name);
-
 			if (!command) return interaction.reply("That's not a valid command!");
 
 			const stat = new MessageEmbed()
@@ -35,8 +38,8 @@ module.exports = {
 				.addFields({ name: "Uses", value: JSON.stringify(command.frequency), inline: true })
 				.setTimestamp();
 			return interaction.reply({ embeds: [stat] });
-		} else {
-			return interaction.reply("Please mention a command!");
 		}
-	},
+
+		await interaction.reply("Please mention a command!");
+	}
 };

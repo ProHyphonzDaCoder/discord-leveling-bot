@@ -1,23 +1,27 @@
 const { MessageAttachment } = require("discord.js");
 const SQLite = require("better-sqlite3");
 const sql = new SQLite("./mainDB.sqlite");
-const Rank = require("../structures/Rank/Rank");
+const Rank = require("../../structures/Rank/Rank");
+const Command = require("../../structures/Command");
 
-module.exports = {
-	name: "rank",
-	aliases: ["rank"],
-	description: "Get your rank or another member's rank",
-	cooldown: 3,
-	options: [
-		{
-			name: "target",
-			description: "The user's rank card to show",
-			type: 6,
-			required: false,
-		},
-	],
-	category: "Leveling",
-	async execute(interaction) {
+module.exports = class RankCommand extends Command {
+	constructor(context) {
+		super(context, {
+			name: "rank",
+			description: "Get your rank or another member's rank",
+			cooldown: 3,
+			options: [
+				{
+					name: "target",
+					description: "The user's rank card to show",
+					type: 6,
+					required: false,
+				},
+			],
+		});
+	}
+
+	async run(interaction) {
 		if (!interaction.isCommand()) return;
 		await interaction.deferReply();
 
@@ -62,5 +66,5 @@ module.exports = {
 
 		const card = await rankCard.build();
 		await interaction.followUp({ files: [new MessageAttachment(card, "RankCard.png")] });
-	},
+	}
 };

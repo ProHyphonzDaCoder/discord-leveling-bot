@@ -1,29 +1,32 @@
 const Discord = require("discord.js");
 const SQlite = require("better-sqlite3");
 const sql = new SQlite("./mainDB.sqlite");
+const Command = require("../../structures/Command");
 
-module.exports = {
-	name: "remove-level",
-	aliases: ["removelevel"],
-	category: "Leveling",
-	description: "Remove or decrease level to specified user",
-	cooldown: 3,
-	options: [
-		{
-			name: "level",
-			description: "The level to take from the user",
-			// Type of input from user: https://discord.com/developers/docs/interactions/slash-commands#applicationcommandoptiontype
-			type: 4,
-			required: true,
-		},
-		{
-			name: "user",
-			description: "The user of whom to remove level (defaults to you)",
-			type: 6,
-			required: false,
-		},
-	],
-	async execute(interaction) {
+module.exports = class RemoveLevelCommand extends Command {
+	constructor(context) {
+		super(context, {
+			name: "remove-level",
+			description: "Remove or decrease level to specified user",
+			cooldown: 3,
+			options: [
+				{
+					name: "level",
+					description: "The level to take from the user",
+					type: 4,
+					required: true,
+				},
+				{
+					name: "user",
+					description: "The user of whom to remove level (defaults to you)",
+					type: 6,
+					required: false,
+				},
+			],
+		});
+	}
+
+	async run(interaction) {
 		await interaction.deferReply();
 
 		const user = interaction.options.getUser("user", false) || interaction.user;
@@ -68,7 +71,7 @@ module.exports = {
 			score.totalXP -= newTotalXP * 2 * 250 + 250;
 			interaction.client.setScore.run(score);
 
-			return interaction.editReply({ embeds: [embed] });
+			await interaction.editReply({ embeds: [embed] });
 		}
-	},
+	}
 };

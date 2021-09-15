@@ -1,30 +1,32 @@
 const { MessageEmbed } = require("discord.js");
 const SQlite = require("better-sqlite3");
-
 const sql = new SQlite("./mainDB.sqlite");
+const Command = require("../../structures/Command");
 
-module.exports = {
-	name: "set-xp",
-	aliases: [],
-	category: "Leveling",
-	description: "Set the xp to something of the specified user",
-	cooldown: 3,
-	options: [
-		{
-			name: "xp",
-			description: "The xp to add",
-			type: 4,
-			required: true,
-		},
-		{
-			name: "user",
-			description: "The user of whom to add xp (defaults to you)",
-			type: 6,
-			required: false,
-		},
-	],
-	async execute(interaction) {
-		const { client } = interaction;
+module.exports = class SetXPCommand extends Command {
+	constructor(context) {
+		super(context, {
+			name: "set-xp",
+			description: "Set the xp to something of the specified user",
+			cooldown: 3,
+			options: [
+				{
+					name: "xp",
+					description: "The xp to add",
+					type: 4,
+					required: true,
+				},
+				{
+					name: "user",
+					description: "The user of whom to add xp (defaults to you)",
+					type: 6,
+					required: false,
+				},
+			],
+		});
+	}
+
+	async run(interaction) {
 		const user = interaction.options.getUser("user") || interaction.user;
 
 		if (!interaction.member.permissions.has("MANAGE_GUILD"))
@@ -33,8 +35,8 @@ module.exports = {
 		await interaction.deferReply();
 
 		const xpArgs = interaction.options.getInteger("xp");
-		client.getScore = sql.prepare("SELECT * FROM levels WHERE user = ? AND guild = ?");
-		client.setScore = sql.prepare(
+		this.client.getScore = sql.prepare("SELECT * FROM levels WHERE user = ? AND guild = ?");
+		this.client.setScore = sql.prepare(
 			"INSERT OR REPLACE INTO levels (id, user, guild, xp, level, totalXP) VALUES (@id, @user, @guild, @xp, @level, @totalXP);"
 		);
 
@@ -42,7 +44,7 @@ module.exports = {
 
 		if (isNaN(xpArgs) || xpArgs < 0) return interaction.editReply("Please provide a valid number!");
 
-		let score = client.getScore.get(user.id, interaction.guild.id);
+		let score = this.client.getScore.get(user.id, interaction.guild.id);
 		if (!score)
 			score = {
 				id: `${interaction.guild.id}-${user.id}`,
@@ -86,8 +88,8 @@ module.exports = {
 			.setDescription(`Successfully set ${xpArgs} xp for ${user.toString()}!`)
 			.setColor("#5AC0DE");
 
-		client.setScore.run(score);
+		this.client.setScore.run(score);
 
-		return interaction.editReply({ embeds: [embed] });
-	},
+		await interaction.editReply({ embeds: [embed] });
+	}
 };
