@@ -25,7 +25,7 @@ module.exports = class XPSettingsCommand extends Command {
 		});
 	}
 
-	async rub(interaction) {
+	async run(interaction) {
 		if (!interaction.member.permissions.has("MANAGE_GUILD"))
 			return interaction.reply("You do not have permission to use this command!");
 
