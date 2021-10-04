@@ -31,6 +31,9 @@ if (!allTables.find((table) => table.name == "commands"))
 if (!allTables.find((table) => table.name == "balance"))
 	sql.exec("CREATE TABLE balance (user TEXT PRIMARY KEY, amount INTEGER DEFAULT 0);");
 
+if (!allTables.find((table) => table.name == "recurringIncome"))
+	sql.exec(`CREATE TABLE recurringIncome (user TEXT PRIMARY KEY, daily DATE DEFAULT (datetime('1970-01-01','localtime')), weekly DATE DEFAULT (datetime('1970-01-01','localtime')), monthly DATE DEFAULT (datetime('1970-01-01','localtime')), yearly DATE DEFAULT (datetime('1970-01-01','localtime')));`);
+
 const getLevel = sql.prepare("SELECT * FROM levels WHERE user = ? AND guild = ?");
 const setLevel = sql.prepare("INSERT OR REPLACE INTO levels (id, user, guild, xp, level, totalXP) VALUES (?, ?, ?, ?, ?, ?);");
 const deleteLevel = sql.prepare("DELETE FROM levels WHERE user = ? AND guild = ?");

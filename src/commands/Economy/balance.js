@@ -1,7 +1,5 @@
-const { MessageAttachment } = require("discord.js");
 const SQLite = require("better-sqlite3");
 const sql = new SQLite("./mainDB.sqlite");
-const Rank = require("../../structures/Rank/Rank");
 const Command = require("../../structures/Command");
 
 module.exports = class RankCommand extends Command {
