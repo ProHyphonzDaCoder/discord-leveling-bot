@@ -21,4 +21,9 @@ module.exports = class Command {
 		console.log(`[${this.name}]: Command class is missing "run(interaction)" method!`);
 		interaction.reply("Something went wrong, please try again later.");
 	}
+
+	async edit(interaction) {
+		console.log(`[${this.name}]: Command class is missing "edit(interaction)" method!`);
+		interaction.reply("Something went wrong, please try again later.");
+	}
 };

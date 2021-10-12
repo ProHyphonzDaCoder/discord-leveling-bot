@@ -1,5 +1,39 @@
-const { MessageEmbed } = require("discord.js");
+const { MessageEmbed, MessageActionRow, MessageSelectMenu } = require("discord.js");
 const Command = require("../../structures/Command");
+
+row = new MessageActionRow()
+.addComponents(
+	new MessageSelectMenu()
+		.setCustomId('help')
+		.setPlaceholder('General')
+		.addOptions([
+			{
+				label: 'General',
+				description: 'Read general commands',
+				value: 'general',
+			},
+			{
+				label: 'Economy',
+				description: 'Read economy commands',
+				value: 'economy',
+			},
+			{
+				label: 'Leveling',
+				description: 'Read leveling commands',
+				value: 'leveling',
+			},
+			{
+				label: 'Modification',
+				description: 'Read modification commands',
+				value: 'modification',
+			},
+			{
+				label: 'Settings',
+				description: 'Read setting commands',
+				value: 'settings',
+			}
+		])
+);
 
 module.exports = class HelpCommand extends Command {
 	constructor(context) {
@@ -19,26 +53,41 @@ module.exports = class HelpCommand extends Command {
 	}
 
 	async run(interaction) {
+		const { commands } = this.client;
+
+		this.categoryEmbeds = [];
+
+		const categories = this.sortCategory([...new Set(commands.map((c) => c.category))]);
+		for (const category of categories) {
+			const cmds = commands.filter((c) => c.category === category);
+			const cmdEmbed = new MessageEmbed()
+				.setColor("#2E294E")
+				.setTitle(`Hyphonz - ${category}`)
+				.setThumbnail(
+					"https://media.discordapp.net/attachments/876895206463635509/878355593881083914/Hyphonz_1.png"
+				)
+				.addField(`• ${category}`, cmds.map(c => `╰ \`${c.name}\``).join("\n"), true)
+				.addField(
+					"The Nexus",
+					"[Support server](https://discord.gg/6SbwSCzehm)\n[Bot invite](https://discord.com/oauth2/authorize?client_id=837864244728692736&permissions=1593305202&scope=bot+applications.commands)",
+					true
+				);
+
+			this.categoryEmbeds.push(cmdEmbed);
+		}
+
 		if (!interaction.guild.me.permissions.has("EMBED_LINKS"))
 			return interaction.channel.send("Missing Permission: `EMBED_LINKS`");
 
-		const { commands } = this.client;
 		const cmd = interaction.options.getString("command");
 		if (!cmd) {
 			const embed = new MessageEmbed()
 				.setColor("#2E294E")
-				.setTitle("Hyphonz - Command List")
+				.setTitle("Hyphonz - General")
 				.setThumbnail(
 					"https://media.discordapp.net/attachments/876895206463635509/878355593881083914/Hyphonz_1.png"
-				);
-
-			const categories = this.sortCategory([...new Set(commands.map((c) => c.category))]);
-			for (const category of categories) {
-				const cmds = commands.filter((c) => c.category === category);
-				embed.addField(`• ${category}`, cmds.map((c) => `╰ \`${c.name}\``).join("\n"), true);
-			}
-
-			embed
+				)
+				.addField(`• General`, "╰ `help`\n╰ `stats`")
 				.addField(
 					"The Nexus",
 					"[Support server](https://discord.gg/6SbwSCzehm)\n[Bot invite](https://discord.com/oauth2/authorize?client_id=837864244728692736&permissions=1593305202&scope=bot+applications.commands)",
@@ -46,7 +95,7 @@ module.exports = class HelpCommand extends Command {
 				)
 				.setTimestamp();
 
-			return interaction.reply({ embeds: [embed] });
+			return interaction.reply({ embeds: [embed], components: [row] });
 		}
 
 		const command =
@@ -73,6 +122,17 @@ module.exports = class HelpCommand extends Command {
 			);
 
 		await interaction.reply({ embeds: [embed] });
+	}
+
+	async edit(interaction) {
+		const selectedCategory = interaction.values[0].toLowerCase();
+
+		const updatedEmbed = this.categoryEmbeds.find(embed => 
+			embed.title.toLowerCase().endsWith(selectedCategory)
+		)
+		updatedEmbed
+			.setTimestamp();
+		await interaction.update({ embeds: [updatedEmbed] });
 	}
 
 	sortCategory(categories) {
