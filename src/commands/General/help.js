@@ -5,32 +5,36 @@ row = new MessageActionRow()
 .addComponents(
 	new MessageSelectMenu()
 		.setCustomId('help')
-		.setPlaceholder('General')
 		.addOptions([
 			{
 				label: 'General',
 				description: 'Read general commands',
 				value: 'general',
+        emoji: '776176649891741725'
 			},
 			{
 				label: 'Economy',
 				description: 'Read economy commands',
 				value: 'economy',
+        emoji: '817475661697515590'
 			},
 			{
 				label: 'Leveling',
 				description: 'Read leveling commands',
 				value: 'leveling',
+        emoji: '852873942346891274'
 			},
 			{
 				label: 'Modification',
 				description: 'Read modification commands',
 				value: 'modification',
+        emoji: '835052958558978089'
 			},
 			{
 				label: 'Settings',
 				description: 'Read setting commands',
 				value: 'settings',
+        emoji: '691685511118716988'
 			}
 		])
 );
@@ -110,13 +114,13 @@ module.exports = class HelpCommand extends Command {
 				"https://media.discordapp.net/attachments/876895206463635509/878355593881083914/Hyphonz_1.png"
 			)
 			.setDescription(
-				`<:reply:878354292845735937> **Command Name**: ${
+				`<:reply:887825417694756895>  **Command Name**: ${
 					command.name
-				}\n<:reply:878354292845735937> **Description**: ${
+				}\n<:reply:887825417694756895>  **Description**: ${
 					command.description ? command.description : "None"
-				}\n<:reply:878354292845735937> **Category**: ${
+				}\n<:reply:887825417694756895>  **Category**: ${
 					command.category ? command.category : "General" || "Misc"
-				}\n<:reply:878354292845735937> **Cooldown**: ${
+				}\n<:reply:887825417694756895>  **Cooldown**: ${
 					command.cooldown ? command.cooldown : "None"
 				}`
 			);
